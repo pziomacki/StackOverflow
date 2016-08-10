@@ -8,10 +8,23 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ziomacki.stackoverflowclient.SearchActivity">
+    tools:context=".search.view.SearchActivity">
 
-    <TextView
+    <EditText
+        android:id="@+id/search_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/search_hint"
+        android:paddingRight="32dp"/>
+
+    <ImageButton
+        android:id="@+id/search_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:src="@android:drawable/ic_menu_search"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackground"/>
+
+
+
 </RelativeLayout>
