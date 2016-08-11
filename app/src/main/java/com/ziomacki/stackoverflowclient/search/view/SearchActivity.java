@@ -1,6 +1,7 @@
 package com.ziomacki.stackoverflowclient.search.view;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SearchActivity extends AppCompatActivity implements SearchView{
+    private static final String FRAGMENT_TAG = "results_tag";
 
     @Bind(R.id.search_edit_text)
     EditText searchEditText;
@@ -37,6 +39,13 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
         ButterKnife.bind(this);
         injectDependencies();
         searchPresenter.attachView(this);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(FRAGMENT_TAG) == null) {
+            ResultsFragment resultsFragment = new ResultsFragment();
+            fragmentManager.beginTransaction().add(R.id.search_fragment_container, resultsFragment, FRAGMENT_TAG).commit();
+        }
+
     }
 
     private void injectDependencies() {

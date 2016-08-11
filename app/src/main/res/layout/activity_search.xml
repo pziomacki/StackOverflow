@@ -15,7 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/search_hint"
-        android:paddingRight="32dp"/>
+        android:paddingRight="@dimen/search_edit_text_padding_right"
+        android:maxLines="1"/>
 
     <ImageButton
         android:id="@+id/search_button"
@@ -25,6 +26,10 @@
         android:layout_alignParentRight="true"
         android:background="?attr/selectableItemBackground"/>
 
-
+    <FrameLayout
+        android:id="@+id/search_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_edit_text"/>
 
 </RelativeLayout>

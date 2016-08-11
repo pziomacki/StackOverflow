@@ -1,12 +1,8 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
-import android.util.Log;
-
-import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
-import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
 
 import javax.inject.Inject;
@@ -28,18 +24,18 @@ public class SearchPresenter {
     }
 
     public void search(String query){
-        QueryParams queryParams = new QueryParams(query, Order.DESCENDING, Sort.ACTIVITY);
+        QueryParams queryParams = new QueryParams.Builder().query(query).build();
         subscription = search.startSearch(queryParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<SearchResults>() {
                     @Override
                     public void call(SearchResults searchResults) {
-                        Log.d("TEST", searchResults.getSearchResultItemList().get(0).getTitle());
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        //TODO: handle specific messages
                         searchView.displayErrorMessage();
                     }
                 });
