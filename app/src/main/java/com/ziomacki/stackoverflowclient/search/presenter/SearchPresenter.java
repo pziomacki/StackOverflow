@@ -31,7 +31,7 @@ public class SearchPresenter {
                 .subscribe(new Action1<SearchResults>() {
                     @Override
                     public void call(SearchResults searchResults) {
-                        searchView.displaySearchResults(searchResults.getSearchResultItemList());
+                        handleSuccesfullResponse(searchResults);
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -40,6 +40,15 @@ public class SearchPresenter {
                         searchView.displayErrorMessage();
                     }
                 });
+    }
+
+    private void handleSuccesfullResponse(SearchResults searchResults) {
+        if (searchResults.getSearchResultItemList().size() > 0) {
+            searchView.displaySearchResults(searchResults.getSearchResultItemList());
+        } else {
+            searchView.displayNoResultsMessage();
+        }
+
     }
 
     public void attachView(SearchView searchView) {

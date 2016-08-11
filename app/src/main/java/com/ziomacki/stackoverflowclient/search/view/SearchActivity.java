@@ -90,4 +90,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
     public void displaySearchResults(List<SearchResultItem> results) {
         resultsFragment.setResults(results);
     }
+
+    @Override
+    public void displayNoResultsMessage() {
+        displaySnackbar(getString(R.string.search_no_results));
+    }
 }

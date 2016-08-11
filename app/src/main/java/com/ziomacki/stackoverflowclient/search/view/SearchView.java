@@ -7,4 +7,5 @@ import java.util.List;
 public interface SearchView {
     void displayErrorMessage();
     void displaySearchResults(List<SearchResultItem> results);
+    void displayNoResultsMessage();
 }
