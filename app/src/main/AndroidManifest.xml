@@ -2,13 +2,16 @@
 <manifest package="com.ziomacki.stackoverflowclient"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
+        android:name=".StackOverflowApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SearchActivity">
+        <activity android:name=".search.view.SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

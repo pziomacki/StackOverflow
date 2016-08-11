@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">StackOverflow client</string>
+    <string name="app_name">StackOverflow Client</string>
+
+    <!-- Search -->
+    <string name="search_hint">Search:</string>
 </resources>
