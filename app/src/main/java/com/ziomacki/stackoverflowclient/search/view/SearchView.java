@@ -5,7 +5,8 @@ import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import java.util.List;
 
 public interface SearchView {
-    String getSearchString();
     void displayErrorMessage();
     void displaySearchResults(List<SearchResultItem> results);
+    void displayNoResultsMessage();
+    void setQuery(String query);
 }

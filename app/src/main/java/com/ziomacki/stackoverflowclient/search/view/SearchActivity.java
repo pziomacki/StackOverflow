@@ -1,9 +1,12 @@
 package com.ziomacki.stackoverflowclient.search.view;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.StackOverflowApplication;
@@ -22,13 +25,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SearchActivity extends AppCompatActivity implements SearchView{
+    private static final String FRAGMENT_TAG = "results_tag";
 
+    @Bind(R.id.search_main_container)
+    RelativeLayout mainContainer;
     @Bind(R.id.search_edit_text)
     EditText searchEditText;
     @Bind(R.id.search_button)
     ImageButton searchButton;
     @Inject
     SearchPresenter searchPresenter;
+
+    private ResultsFragment resultsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,14 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
         ButterKnife.bind(this);
         injectDependencies();
         searchPresenter.attachView(this);
+        searchPresenter.setInitialQueryParamsIfNotRecreated(savedInstanceState);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        resultsFragment = (ResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
+        if (resultsFragment == null) {
+            resultsFragment = ResultsFragment.getInstance();
+            fragmentManager.beginTransaction().add(R.id.search_fragment_container, resultsFragment, FRAGMENT_TAG).commit();
+        }
+
     }
 
     private void injectDependencies() {
@@ -50,23 +66,38 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
                 .inject(this);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        searchPresenter.onStop();
+    }
+
     @OnClick(R.id.search_button)
     public void onSearchButtonClick() {
         searchPresenter.search(searchEditText.getText().toString());
     }
 
     @Override
-    public String getSearchString() {
-        return null;
+    public void displayErrorMessage() {
+        displaySnackbar(getString(R.string.search_error_message));
     }
 
-    @Override
-    public void displayErrorMessage() {
-
+    private void displaySnackbar(String message) {
+        Snackbar.make(mainContainer, message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void displaySearchResults(List<SearchResultItem> results) {
+        resultsFragment.setResults(results);
+    }
 
+    @Override
+    public void displayNoResultsMessage() {
+        displaySnackbar(getString(R.string.search_no_results));
+    }
+
+    @Override
+    public void setQuery(String query) {
+        searchEditText.setText(query);
     }
 }

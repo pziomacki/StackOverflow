@@ -5,10 +5,38 @@ public class QueryParams {
     private Order order;
     private Sort sort;
 
-    public QueryParams(String query, Order order, Sort sort) {
-        this.query = query;
-        this.order = order;
-        this.sort = sort;
+    private QueryParams(Builder builder) {
+        this.query = builder.query;
+        this.order = builder.order;
+        this.sort = builder.sort;
+    }
+
+    public static final class Builder {
+        private String query = "";
+        private Order order = Order.DESCENDING;
+        private Sort sort = Sort.ACTIVITY;
+
+        public Builder() {
+        }
+
+        public Builder query(String val) {
+            query = val;
+            return this;
+        }
+
+        public Builder order(Order val) {
+            order = val;
+            return this;
+        }
+
+        public Builder sort(Sort val) {
+            sort = val;
+            return this;
+        }
+
+        public QueryParams build() {
+            return new QueryParams(this);
+        }
     }
 
     public String getQuery() {
@@ -34,4 +62,6 @@ public class QueryParams {
     public void setSort(Sort sort) {
         this.sort = sort;
     }
+
+
 }
