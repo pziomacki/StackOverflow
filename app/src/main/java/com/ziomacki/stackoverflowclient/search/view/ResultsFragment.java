@@ -54,9 +54,11 @@ public class ResultsFragment extends Fragment implements ResultsView {
     private void initRecyclerView() {
         resultsRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        ListDivider listDivider = new ListDivider(getContext());
         resultsRecyclerView.setLayoutManager(linearLayoutManager);
         resultsAdapter = new ResultsAdapter();
         resultsRecyclerView.setAdapter(resultsAdapter);
+        resultsRecyclerView.addItemDecoration(listDivider);
     }
 
     @Override
