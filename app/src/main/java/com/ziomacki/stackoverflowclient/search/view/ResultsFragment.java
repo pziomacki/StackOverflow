@@ -8,15 +8,31 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ziomacki.stackoverflowclient.R;
+import com.ziomacki.stackoverflowclient.StackOverflowApplication;
+import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
+import com.ziomacki.stackoverflowclient.search.presenter.ResultsPresenter;
+
+import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
 public class ResultsFragment extends Fragment {
 
+    private List<SearchResultItem> resultItemList;
+    @Inject
+    ResultsPresenter resultsPresenter;
+
+    public static ResultsFragment getInstance() {
+        return new ResultsFragment();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        ((StackOverflowApplication) getActivity().getApplication()).getApplicationComponent().inject(this);
     }
 
     @Nullable
@@ -31,4 +47,9 @@ public class ResultsFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
+
+    public void setResults(List<SearchResultItem> resultItemList) {
+        resultsPresenter.setSearchResultItemList(resultItemList);
+    }
+
 }
