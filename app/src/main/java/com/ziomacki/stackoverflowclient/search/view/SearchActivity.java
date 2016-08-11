@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
         ButterKnife.bind(this);
         injectDependencies();
         searchPresenter.attachView(this);
-
+        searchPresenter.setInitialQueryParamsIfNotRecreated(savedInstanceState);
         FragmentManager fragmentManager = getSupportFragmentManager();
         resultsFragment = (ResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (resultsFragment == null) {
@@ -94,5 +94,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
     @Override
     public void displayNoResultsMessage() {
         displaySnackbar(getString(R.string.search_no_results));
+    }
+
+    @Override
+    public void setQuery(String query) {
+        searchEditText.setText(query);
     }
 }

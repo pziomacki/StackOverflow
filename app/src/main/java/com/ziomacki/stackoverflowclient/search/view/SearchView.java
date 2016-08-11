@@ -8,4 +8,5 @@ public interface SearchView {
     void displayErrorMessage();
     void displaySearchResults(List<SearchResultItem> results);
     void displayNoResultsMessage();
+    void setQuery(String query);
 }

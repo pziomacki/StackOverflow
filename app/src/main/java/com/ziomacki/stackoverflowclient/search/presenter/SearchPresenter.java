@@ -1,6 +1,9 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
+import android.os.Bundle;
+
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
+import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
@@ -17,14 +20,27 @@ public class SearchPresenter {
     private Search search;
     private SearchView searchView;
     private Subscription subscription;
+    private QueryParamsRepository queryParamsRepository;
+    private QueryParams queryParams;
 
     @Inject
-    public SearchPresenter(Search search) {
+    public SearchPresenter(Search search, QueryParamsRepository queryParamsRepository) {
         this.search = search;
+        this.queryParamsRepository = queryParamsRepository;
+    }
+
+    public void setInitialQueryParamsIfNotRecreated(Bundle savedInstance) {
+        if (savedInstance == null) {
+            //TODO: handle sort and order
+            queryParams = queryParamsRepository.getQueryParams();
+            searchView.setQuery(queryParams.getQuery());
+        }
     }
 
     public void search(String query){
+        //TODO: handle sort and order
         QueryParams queryParams = new QueryParams.Builder().query(query).build();
+        storeQueryParams(queryParams);
         subscription = search.startSearch(queryParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -40,6 +56,10 @@ public class SearchPresenter {
                         searchView.displayErrorMessage();
                     }
                 });
+    }
+
+    private void storeQueryParams(QueryParams queryParams) {
+        queryParamsRepository.saveQueryParams(queryParams);
     }
 
     private void handleSuccesfullResponse(SearchResults searchResults) {
