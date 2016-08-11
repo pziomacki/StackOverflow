@@ -1,10 +1,12 @@
 package com.ziomacki.stackoverflowclient.search.view;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.StackOverflowApplication;
@@ -25,6 +27,8 @@ import butterknife.OnClick;
 public class SearchActivity extends AppCompatActivity implements SearchView{
     private static final String FRAGMENT_TAG = "results_tag";
 
+    @Bind(R.id.search_main_container)
+    RelativeLayout mainContainer;
     @Bind(R.id.search_edit_text)
     EditText searchEditText;
     @Bind(R.id.search_button)
@@ -75,7 +79,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
 
     @Override
     public void displayErrorMessage() {
+        displaySnackbar(getString(R.string.search_error_message));
+    }
 
+    private void displaySnackbar(String message) {
+        Snackbar.make(mainContainer, message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
