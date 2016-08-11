@@ -31,6 +31,7 @@ public class SearchPresenter {
                 .subscribe(new Action1<SearchResults>() {
                     @Override
                     public void call(SearchResults searchResults) {
+                        searchView.displaySearchResults(searchResults.getSearchResultItemList());
                     }
                 }, new Action1<Throwable>() {
                     @Override

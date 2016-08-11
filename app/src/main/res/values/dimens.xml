@@ -5,4 +5,7 @@
 
     <!--search -->
     <dimen name="search_edit_text_padding_right">32dp</dimen>
+
+    <!--results -->
+    <dimen name="result_item_height">48dp</dimen>
 </resources>
