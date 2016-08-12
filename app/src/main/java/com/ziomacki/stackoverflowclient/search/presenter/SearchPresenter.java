@@ -2,6 +2,7 @@ package com.ziomacki.stackoverflowclient.search.presenter;
 
 import android.os.Bundle;
 
+import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
@@ -34,17 +35,17 @@ public class SearchPresenter {
 
     public void setInitialQueryParamsIfNotRecreated(Bundle savedInstance) {
         if (savedInstance == null) {
-            //TODO: handle sort and order
             queryParams = queryParamsRepository.getQueryParams();
             searchView.setQuery(queryParams.getQuery());
+            searchView.setOrder(queryParams.getOrder());
         }
     }
 
-    public void search(String query){
+    public void search(String query, Order order){
 
-        //TODO: handle sort and order
+        //TODO: handle sort
         if (isQueryStringValid(query)) {
-            queryParams = new QueryParams.Builder().query(query).build();
+            queryParams = new QueryParams.Builder().query(query).order(order).build();
             storeQueryParams(queryParams);
             search(queryParams);
         }

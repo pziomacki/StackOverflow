@@ -5,16 +5,20 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.StackOverflowApplication;
 import com.ziomacki.stackoverflowclient.inject.ApplicationComponent;
 import com.ziomacki.stackoverflowclient.inject.DaggerSearchComponent;
 import com.ziomacki.stackoverflowclient.inject.SearchModule;
+import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
+import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.presenter.SearchPresenter;
 
 import java.util.List;
@@ -36,6 +40,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     ImageButton searchButton;
     @Bind(R.id.search_fragment_container)
     SwipeRefreshLayout swipeRefreshLayout;
+    @Bind(R.id.search_order)
+    Spinner orderSpinner;
     @Inject
     SearchPresenter searchPresenter;
 
@@ -47,10 +53,20 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
         injectDependencies();
-        searchPresenter.attachView(this);
-        searchPresenter.setInitialQueryParamsIfNotRecreated(savedInstanceState);
+        initViews();
+        initPresenter(savedInstanceState);
+
+    }
+
+    private void initViews() {
         addResultsFragment();
         setupRefreshLayout();
+        setupOrderSpinner();
+    }
+
+    private void initPresenter(Bundle savedInstanceState) {
+        searchPresenter.attachView(this);
+        searchPresenter.setInitialQueryParamsIfNotRecreated(savedInstanceState);
     }
 
     private void setupRefreshLayout() {
@@ -90,7 +106,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     @OnClick(R.id.search_button)
     public void onSearchButtonClick() {
-        searchPresenter.search(searchEditText.getText().toString());
+        Order order = (Order) orderSpinner.getSelectedItem();
+        searchPresenter.search(searchEditText.getText().toString(), order);
     }
 
     @Override
@@ -131,4 +148,28 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     public void displayEmptyQueryMessage() {
         displaySnackbar(getString(R.string.search_empty_query));
     }
+
+    @Override
+    public void setOrder(Order order) {
+        int position = ((ArrayAdapter) orderSpinner.getAdapter()).getPosition(order);
+        setSpinnerSelection(orderSpinner, position);
+    }
+
+    private void setSpinnerSelection(Spinner spinner, int position){
+        if (position != -1) {
+            spinner.setSelection(position);
+        }
+    }
+
+    @Override
+    public void setSort(Sort sort) {
+        //TODO: implement
+    }
+
+    private void setupOrderSpinner() {
+        ArrayAdapter<Order> orderArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_selectable_list_item,
+                Order.values());
+        orderSpinner.setAdapter(orderArrayAdapter);
+    }
+    
 }
