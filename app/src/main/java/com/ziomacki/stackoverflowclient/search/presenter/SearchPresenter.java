@@ -2,11 +2,13 @@ package com.ziomacki.stackoverflowclient.search.presenter;
 
 import android.os.Bundle;
 
+import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
+import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
 
 import javax.inject.Inject;
@@ -33,18 +35,21 @@ public class SearchPresenter {
     }
 
     public void setInitialQueryParamsIfNotRecreated(Bundle savedInstance) {
+        queryParams = queryParamsRepository.getQueryParams();
         if (savedInstance == null) {
-            //TODO: handle sort and order
-            queryParams = queryParamsRepository.getQueryParams();
             searchView.setQuery(queryParams.getQuery());
+            searchView.setOrder(queryParams.getOrder());
+            searchView.setSort(queryParams.getSort());
         }
     }
 
-    public void search(String query){
-
-        //TODO: handle sort and order
+    public void search(String query, Order order, Sort sort){
         if (isQueryStringValid(query)) {
-            queryParams = new QueryParams.Builder().query(query).build();
+            queryParams = new QueryParams.Builder()
+                    .query(query)
+                    .order(order)
+                    .sort(sort)
+                    .build();
             storeQueryParams(queryParams);
             search(queryParams);
         }
