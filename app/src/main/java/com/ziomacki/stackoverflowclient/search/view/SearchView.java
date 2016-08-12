@@ -11,4 +11,5 @@ public interface SearchView {
     void setQuery(String query);
     void displayDataLoading();
     void hideDataLoading();
+    void displayEmptyQueryMessage();
 }

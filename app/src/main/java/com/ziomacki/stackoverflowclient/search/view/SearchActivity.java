@@ -126,4 +126,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     public void hideDataLoading() {
         swipeRefreshLayout.setRefreshing(false);
     }
+
+    @Override
+    public void displayEmptyQueryMessage() {
+        displaySnackbar(getString(R.string.search_empty_query));
+    }
 }

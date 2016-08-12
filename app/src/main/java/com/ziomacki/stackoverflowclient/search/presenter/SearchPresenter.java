@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
+import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
@@ -22,11 +23,13 @@ public class SearchPresenter {
     private Subscription subscription;
     private QueryParamsRepository queryParamsRepository;
     private QueryParams queryParams;
+    private QueryValidator queryValidator;
 
     @Inject
-    public SearchPresenter(Search search, QueryParamsRepository queryParamsRepository) {
+    public SearchPresenter(Search search, QueryParamsRepository queryParamsRepository, QueryValidator queryValidator) {
         this.search = search;
         this.queryParamsRepository = queryParamsRepository;
+        this.queryValidator = queryValidator;
     }
 
     public void setInitialQueryParamsIfNotRecreated(Bundle savedInstance) {
@@ -38,10 +41,22 @@ public class SearchPresenter {
     }
 
     public void search(String query){
+
         //TODO: handle sort and order
-        queryParams  = new QueryParams.Builder().query(query).build();
-        storeQueryParams(queryParams);
-        search(queryParams);
+        if (isQueryStringValid(query)) {
+            queryParams = new QueryParams.Builder().query(query).build();
+            storeQueryParams(queryParams);
+            search(queryParams);
+        }
+    }
+
+    private boolean isQueryStringValid(String query) {
+        if (queryValidator.isQueryValid(query) == QueryValidator.EMPTY_QUERY) {
+            searchView.displayEmptyQueryMessage();
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void search(QueryParams queryParams) {
