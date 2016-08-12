@@ -42,6 +42,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.search_order)
     Spinner orderSpinner;
+    @Bind(R.id.search_sort)
+    Spinner sortSpinner;
     @Inject
     SearchPresenter searchPresenter;
 
@@ -55,13 +57,13 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         injectDependencies();
         initViews();
         initPresenter(savedInstanceState);
-
     }
 
     private void initViews() {
         addResultsFragment();
         setupRefreshLayout();
         setupOrderSpinner();
+        setupSortSpinner();
     }
 
     private void initPresenter(Bundle savedInstanceState) {
@@ -106,8 +108,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     @OnClick(R.id.search_button)
     public void onSearchButtonClick() {
+        String queryString = searchEditText.getText().toString();
         Order order = (Order) orderSpinner.getSelectedItem();
-        searchPresenter.search(searchEditText.getText().toString(), order);
+        Sort sort = (Sort) sortSpinner.getSelectedItem();
+        searchPresenter.search(queryString, order, sort);
     }
 
     @Override
@@ -163,13 +167,20 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     @Override
     public void setSort(Sort sort) {
-        //TODO: implement
+        int position = ((ArrayAdapter) sortSpinner.getAdapter()).getPosition(sort);
+        setSpinnerSelection(sortSpinner, position);
     }
 
     private void setupOrderSpinner() {
-        ArrayAdapter<Order> orderArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_selectable_list_item,
+        ArrayAdapter<Order> orderArrayAdapter = new ArrayAdapter<>(this, android.R.layout
+                .simple_selectable_list_item,
                 Order.values());
         orderSpinner.setAdapter(orderArrayAdapter);
     }
-    
+
+    private void setupSortSpinner() {
+        ArrayAdapter<Sort> sortArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item, Sort
+                .values());
+        sortSpinner.setAdapter(sortArrayAdapter);
+    }
 }

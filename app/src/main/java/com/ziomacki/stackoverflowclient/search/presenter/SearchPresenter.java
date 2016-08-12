@@ -8,6 +8,7 @@ import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
+import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
 
 import javax.inject.Inject;
@@ -34,18 +35,21 @@ public class SearchPresenter {
     }
 
     public void setInitialQueryParamsIfNotRecreated(Bundle savedInstance) {
+        queryParams = queryParamsRepository.getQueryParams();
         if (savedInstance == null) {
-            queryParams = queryParamsRepository.getQueryParams();
             searchView.setQuery(queryParams.getQuery());
             searchView.setOrder(queryParams.getOrder());
+            searchView.setSort(queryParams.getSort());
         }
     }
 
-    public void search(String query, Order order){
-
-        //TODO: handle sort
+    public void search(String query, Order order, Sort sort){
         if (isQueryStringValid(query)) {
-            queryParams = new QueryParams.Builder().query(query).order(order).build();
+            queryParams = new QueryParams.Builder()
+                    .query(query)
+                    .order(order)
+                    .sort(sort)
+                    .build();
             storeQueryParams(queryParams);
             search(queryParams);
         }
