@@ -39,8 +39,13 @@ public class SearchPresenter {
 
     public void search(String query){
         //TODO: handle sort and order
-        QueryParams queryParams = new QueryParams.Builder().query(query).build();
+        queryParams  = new QueryParams.Builder().query(query).build();
         storeQueryParams(queryParams);
+        search(queryParams);
+    }
+
+    private void search(QueryParams queryParams) {
+        searchView.displayDataLoading();
         subscription = search.startSearch(queryParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -53,6 +58,7 @@ public class SearchPresenter {
                     @Override
                     public void call(Throwable throwable) {
                         //TODO: handle specific messages
+                        searchView.hideDataLoading();
                         searchView.displayErrorMessage();
                     }
                 });
@@ -63,12 +69,12 @@ public class SearchPresenter {
     }
 
     private void handleSuccesfullResponse(SearchResults searchResults) {
+        searchView.hideDataLoading();
         if (searchResults.getSearchResultItemList().size() > 0) {
             searchView.displaySearchResults(searchResults.getSearchResultItemList());
         } else {
             searchView.displayNoResultsMessage();
         }
-
     }
 
     public void attachView(SearchView searchView) {
@@ -79,5 +85,9 @@ public class SearchPresenter {
         if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
+    }
+
+    public void refresh() {
+        search(queryParams);
     }
 }

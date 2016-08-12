@@ -9,4 +9,6 @@ public interface SearchView {
     void displaySearchResults(List<SearchResultItem> results);
     void displayNoResultsMessage();
     void setQuery(String query);
+    void displayDataLoading();
+    void hideDataLoading();
 }

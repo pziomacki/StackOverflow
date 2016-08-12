@@ -3,6 +3,7 @@ package com.ziomacki.stackoverflowclient.search.view;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,7 +25,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SearchActivity extends AppCompatActivity implements SearchView{
+public class SearchActivity extends AppCompatActivity implements SearchView {
     private static final String FRAGMENT_TAG = "results_tag";
 
     @Bind(R.id.search_main_container)
@@ -33,6 +34,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
     EditText searchEditText;
     @Bind(R.id.search_button)
     ImageButton searchButton;
+    @Bind(R.id.search_fragment_container)
+    SwipeRefreshLayout swipeRefreshLayout;
     @Inject
     SearchPresenter searchPresenter;
 
@@ -46,13 +49,26 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
         injectDependencies();
         searchPresenter.attachView(this);
         searchPresenter.setInitialQueryParamsIfNotRecreated(savedInstanceState);
+        addResultsFragment();
+        setupRefreshLayout();
+    }
+
+    private void setupRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                searchPresenter.refresh();
+            }
+        });
+    }
+
+    private void addResultsFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         resultsFragment = (ResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (resultsFragment == null) {
             resultsFragment = ResultsFragment.getInstance();
             fragmentManager.beginTransaction().add(R.id.search_fragment_container, resultsFragment, FRAGMENT_TAG).commit();
         }
-
     }
 
     private void injectDependencies() {
@@ -99,5 +115,15 @@ public class SearchActivity extends AppCompatActivity implements SearchView{
     @Override
     public void setQuery(String query) {
         searchEditText.setText(query);
+    }
+
+    @Override
+    public void displayDataLoading() {
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void hideDataLoading() {
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

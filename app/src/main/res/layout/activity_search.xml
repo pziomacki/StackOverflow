@@ -27,10 +27,11 @@
         android:layout_alignParentRight="true"
         android:background="?attr/selectableItemBackground"/>
 
-    <FrameLayout
+    <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/search_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/search_edit_text"/>
+
 
 </RelativeLayout>
