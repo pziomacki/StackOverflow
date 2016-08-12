@@ -77,6 +77,7 @@ public class SearchPresenter {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        throwable.printStackTrace();
                         //TODO: handle specific messages
                         searchView.hideDataLoading();
                         searchView.displayErrorMessage();

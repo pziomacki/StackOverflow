@@ -1,11 +1,14 @@
 package com.ziomacki.stackoverflowclient.search.view;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 
@@ -22,6 +25,12 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultsV
 
         @Bind(R.id.result_item_title)
         TextView resultItemTitle;
+        @Bind(R.id.result_item_count)
+        TextView answersCount;
+        @Bind(R.id.result_item_name)
+        TextView ownerName;
+        @Bind(R.id.result_item_avatar)
+        ImageView avatar;
 
         public ResultsViewHolder(View itemView) {
             super(itemView);
@@ -44,7 +53,16 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultsV
 
     @Override
     public void onBindViewHolder(ResultsViewHolder holder, int position) {
-        holder.resultItemTitle.setText(resultItemList.get(position).getTitle());
+        SearchResultItem resultItem = resultItemList.get(position);
+        holder.resultItemTitle.setText(resultItem.getTitle());
+        Context context = holder.answersCount.getContext();
+        holder.answersCount.setText(context.getString(R.string.result_answer_count, resultItem.getAnswerCount()));
+        holder.ownerName.setText(resultItem.getOwner().getDisplayName());
+        Picasso.with(context)
+                .load(resultItem.getOwner().getProfileImage())
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .into(holder.avatar);
     }
 
     @Override
