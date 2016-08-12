@@ -5,4 +5,5 @@
     <string name="search_hint">Search:</string>
     <string name="search_error_message">Something went wrong. Try again!</string>
     <string name="search_no_results">No results were found for your query.</string>
+    <string name="search_empty_query">You have to provide a query.</string>
 </resources>

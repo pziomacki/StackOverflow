@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
+import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
@@ -22,11 +23,13 @@ public class SearchPresenter {
     private Subscription subscription;
     private QueryParamsRepository queryParamsRepository;
     private QueryParams queryParams;
+    private QueryValidator queryValidator;
 
     @Inject
-    public SearchPresenter(Search search, QueryParamsRepository queryParamsRepository) {
+    public SearchPresenter(Search search, QueryParamsRepository queryParamsRepository, QueryValidator queryValidator) {
         this.search = search;
         this.queryParamsRepository = queryParamsRepository;
+        this.queryValidator = queryValidator;
     }
 
     public void setInitialQueryParamsIfNotRecreated(Bundle savedInstance) {
@@ -38,9 +41,26 @@ public class SearchPresenter {
     }
 
     public void search(String query){
+
         //TODO: handle sort and order
-        QueryParams queryParams = new QueryParams.Builder().query(query).build();
-        storeQueryParams(queryParams);
+        if (isQueryStringValid(query)) {
+            queryParams = new QueryParams.Builder().query(query).build();
+            storeQueryParams(queryParams);
+            search(queryParams);
+        }
+    }
+
+    private boolean isQueryStringValid(String query) {
+        if (queryValidator.isQueryValid(query) == QueryValidator.EMPTY_QUERY) {
+            searchView.displayEmptyQueryMessage();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void search(QueryParams queryParams) {
+        searchView.displayDataLoading();
         subscription = search.startSearch(queryParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -53,6 +73,7 @@ public class SearchPresenter {
                     @Override
                     public void call(Throwable throwable) {
                         //TODO: handle specific messages
+                        searchView.hideDataLoading();
                         searchView.displayErrorMessage();
                     }
                 });
@@ -63,12 +84,12 @@ public class SearchPresenter {
     }
 
     private void handleSuccesfullResponse(SearchResults searchResults) {
+        searchView.hideDataLoading();
         if (searchResults.getSearchResultItemList().size() > 0) {
             searchView.displaySearchResults(searchResults.getSearchResultItemList());
         } else {
             searchView.displayNoResultsMessage();
         }
-
     }
 
     public void attachView(SearchView searchView) {
@@ -79,5 +100,9 @@ public class SearchPresenter {
         if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
+    }
+
+    public void refresh() {
+        search(queryParams);
     }
 }
