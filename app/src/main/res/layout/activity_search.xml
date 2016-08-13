@@ -9,7 +9,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".search.view.SearchActivity">
+    tools:context=".search.view.SearchActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
     
     <EditText
         android:id="@+id/search_edit_text"
@@ -48,7 +50,7 @@
 
     </LinearLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <FrameLayout
         android:id="@+id/search_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
