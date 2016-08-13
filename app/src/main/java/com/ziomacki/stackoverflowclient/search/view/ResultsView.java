@@ -11,5 +11,7 @@ public interface ResultsView {
     void displayErrorMessage();
     void displayDataLoading();
     void hideDataLoading();
+    void disableRefresh();
+    void enableRefresh();
 
 }

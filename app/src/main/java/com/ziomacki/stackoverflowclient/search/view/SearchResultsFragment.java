@@ -126,4 +126,14 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     public void hideDataLoading() {
         swipeRefreshLayout.setRefreshing(false);
     }
+
+    @Override
+    public void enableRefresh() {
+        swipeRefreshLayout.setEnabled(true);
+    }
+
+    @Override
+    public void disableRefresh() {
+        swipeRefreshLayout.setEnabled(false);
+    }
 }

@@ -45,10 +45,24 @@ public class ResultsPresenter {
         if (searchResultItemList != null) {
             resultsView.displayResults(searchResultItemList);
         }
+        if (queryParams == null) {
+            disableRefresh();
+        } else {
+            enableRefresh();
+        }
+    }
+
+    private void enableRefresh() {
+        resultsView.enableRefresh();
+    }
+
+    private void disableRefresh() {
+        resultsView.disableRefresh();
     }
 
     private void search(QueryParams queryParams) {
         this.queryParams = queryParams;
+        enableRefresh();
         resultsView.displayDataLoading();
         Subscription subscription = search.startSearch(queryParams)
                 .subscribeOn(Schedulers.io())
