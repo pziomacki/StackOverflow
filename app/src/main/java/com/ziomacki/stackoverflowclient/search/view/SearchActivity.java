@@ -108,6 +108,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     @OnClick(R.id.search_button)
     public void onSearchButtonClick() {
+        search();
+    }
+
+    private void search() {
         String queryString = searchEditText.getText().toString();
         Order order = (Order) orderSpinner.getSelectedItem();
         Sort sort = (Sort) sortSpinner.getSelectedItem();
@@ -172,8 +176,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     }
 
     private void setupOrderSpinner() {
-        ArrayAdapter<Order> orderArrayAdapter = new ArrayAdapter<>(this, android.R.layout
-                .simple_selectable_list_item,
+        ArrayAdapter<Order> orderArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item,
                 Order.values());
         orderSpinner.setAdapter(orderArrayAdapter);
     }
@@ -183,4 +186,5 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
                 .values());
         sortSpinner.setAdapter(sortArrayAdapter);
     }
+
 }

@@ -1,8 +1,8 @@
 package com.ziomacki.stackoverflowclient.search.model
 
 import android.content.SharedPreferences
+import rx.observers.TestSubscriber
 import spock.lang.Specification
-
 
 class QueryParamsRepositorySpec extends Specification {
 
@@ -43,9 +43,11 @@ class QueryParamsRepositorySpec extends Specification {
             sharedPreferencesStub.getString("key_query", "") >> "test_query";
             sharedPreferencesStub.getString("key_order", "") >> "asc";
             sharedPreferencesStub.getString("key_sort", "") >> "relevance";
+            TestSubscriber<QueryParams> subscriber = new TestSubscriber<>();
             QueryParamsRepository sut = new QueryParamsRepository(sharedPreferencesStub);
         when:
-            QueryParams queryParams = sut.getQueryParams();
+            sut.getQueryParamsObservable().subscribe(subscriber);
+            QueryParams queryParams = subscriber.getOnNextEvents().get(0);
         then:
             queryParams.order== Order.ASCENDING;
             queryParams.sort == Sort.RELEVANCE;
