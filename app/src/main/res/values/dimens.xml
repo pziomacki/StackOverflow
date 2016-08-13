@@ -13,4 +13,5 @@
     <dimen name="result_item_title_size">16sp</dimen>
     <dimen name="result_item_text_size">12sp</dimen>
     <dimen name="result_item_name_padding_horizontal">4dp</dimen>
+    <dimen name="result_item_name_width">100dp</dimen>
 </resources>

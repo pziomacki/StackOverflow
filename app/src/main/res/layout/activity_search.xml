@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".search.view.SearchActivity">
-
+    
     <EditText
         android:id="@+id/search_edit_text"
         android:layout_width="match_parent"
@@ -35,13 +35,13 @@
         android:layout_below="@+id/search_edit_text">
 
         <Spinner
-            android:id="@+id/search_order"
+            android:id="@+id/search_sort"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
         <Spinner
-            android:id="@+id/search_sort"
+            android:id="@+id/search_order"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>

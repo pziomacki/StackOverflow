@@ -55,14 +55,19 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultsV
     public void onBindViewHolder(ResultsViewHolder holder, int position) {
         SearchResultItem resultItem = resultItemList.get(position);
         holder.resultItemTitle.setText(resultItem.getTitle());
-        Context context = holder.answersCount.getContext();
+        Context context = holder.avatar.getContext();
         holder.answersCount.setText(context.getString(R.string.result_answer_count, resultItem.getAnswerCount()));
         holder.ownerName.setText(resultItem.getOwner().getDisplayName());
-        Picasso.with(context)
-                .load(resultItem.getOwner().getProfileImage())
-                .placeholder(R.mipmap.ic_launcher)
-                .error(R.mipmap.ic_launcher)
-                .into(holder.avatar);
+        String imageUrl = resultItem.getOwner().getProfileImage();
+        if (!isEmptyString(imageUrl)) {
+            Picasso.with(context)
+                    .load(resultItem.getOwner().getProfileImage())
+                    .into(holder.avatar);
+        }
+    }
+
+    private boolean isEmptyString(String string) {
+        return string == null || string.equals("");
     }
 
     @Override

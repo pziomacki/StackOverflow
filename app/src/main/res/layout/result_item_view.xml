@@ -16,34 +16,32 @@
         android:maxLines="1"
         android:textSize="@dimen/result_item_title_size"/>
 
-    <ImageView
-        android:id="@+id/result_item_avatar"
-        android:layout_width="@dimen/result_item_avatar_size"
-        android:layout_height="@dimen/result_item_avatar_size"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:scaleType="fitCenter"/>
-
     <TextView
         android:id="@+id/result_item_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:maxLines="1"
         android:textSize="@dimen/result_item_text_size"/>
 
     <TextView
         android:id="@+id/result_item_name"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/result_item_name_width"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/result_item_count"
-        android:layout_toRightOf="@id/result_item_avatar"
         android:ellipsize="end"
         android:maxLines="1"
+        android:layout_alignParentRight="true"
         android:paddingLeft="@dimen/result_item_name_padding_horizontal"
-        android:paddingRight="@dimen/result_item_name_padding_horizontal"
         android:textSize="@dimen/result_item_text_size"/>
+
+    <ImageView
+        android:id="@+id/result_item_avatar"
+        android:layout_width="@dimen/result_item_avatar_size"
+        android:layout_height="@dimen/result_item_avatar_size"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/result_item_name"
+        android:scaleType="fitCenter"/>
 
 </RelativeLayout>
