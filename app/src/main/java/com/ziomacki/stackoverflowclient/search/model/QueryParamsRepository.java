@@ -4,6 +4,9 @@ import android.content.SharedPreferences;
 
 import javax.inject.Inject;
 
+import rx.Observable;
+import rx.Subscriber;
+
 public class QueryParamsRepository {
 
     private static final String KEY_QUERY = "key_query";
@@ -25,7 +28,7 @@ public class QueryParamsRepository {
         editor.apply();
     }
 
-    public QueryParams getQueryParams() {
+    private QueryParams getQueryParams() {
         QueryParams.Builder builder = new QueryParams.Builder();
         String orderString = sharedPreferences.getString(KEY_ORDER, "");
         if (!orderString.equals("")) {
@@ -37,6 +40,15 @@ public class QueryParamsRepository {
         }
         builder.query(sharedPreferences.getString(KEY_QUERY, ""));
         return builder.build();
+    }
+
+    public Observable<QueryParams> getQueryParamsObservable() {
+        return Observable.create(new Observable.OnSubscribe<QueryParams>() {
+            @Override
+            public void call(Subscriber<? super QueryParams> subscriber) {
+                subscriber.onNext(getQueryParams());
+            }
+        });
     }
 
 }

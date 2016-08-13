@@ -17,15 +17,16 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class SearchPresenter {
 
     private Search search;
     private SearchView searchView;
-    private Subscription subscription;
     private QueryParamsRepository queryParamsRepository;
     private QueryParams queryParams;
     private QueryValidator queryValidator;
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Inject
     public SearchPresenter(Search search, QueryParamsRepository queryParamsRepository, QueryValidator queryValidator) {
@@ -34,13 +35,18 @@ public class SearchPresenter {
         this.queryValidator = queryValidator;
     }
 
-    public void setInitialQueryParamsIfNotRecreated(Bundle savedInstance) {
-        queryParams = queryParamsRepository.getQueryParams();
-        if (savedInstance == null) {
-            searchView.setQuery(queryParams.getQuery());
-            searchView.setOrder(queryParams.getOrder());
-            searchView.setSort(queryParams.getSort());
-        }
+    public void setInitialQueryParamsIfNotRecreated(final Bundle savedInstance) {
+        Subscription subscription = queryParamsRepository.getQueryParamsObservable().subscribe(new Action1<QueryParams>() {
+            @Override
+            public void call(QueryParams queryParams) {
+                if (savedInstance == null) {
+                    searchView.setQuery(queryParams.getQuery());
+                    searchView.setOrder(queryParams.getOrder());
+                    searchView.setSort(queryParams.getSort());
+                }
+            }
+        });
+        subscriptions.add(subscription);
     }
 
     public void search(String query, Order order, Sort sort){
@@ -66,7 +72,7 @@ public class SearchPresenter {
 
     private void search(QueryParams queryParams) {
         searchView.displayDataLoading();
-        subscription = search.startSearch(queryParams)
+        Subscription subscription = search.startSearch(queryParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<SearchResults>() {
@@ -83,6 +89,7 @@ public class SearchPresenter {
                         searchView.displayErrorMessage();
                     }
                 });
+        subscriptions.add(subscription);
     }
 
     private void storeQueryParams(QueryParams queryParams) {
@@ -103,8 +110,8 @@ public class SearchPresenter {
     }
 
     public void onStop() {
-        if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
+        if (subscriptions != null && !subscriptions.isUnsubscribed()) {
+            subscriptions.unsubscribe();
         }
     }
 
