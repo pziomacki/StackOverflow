@@ -1,10 +1,11 @@
 package com.ziomacki.stackoverflowclient.search.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,37 +18,32 @@ import com.ziomacki.stackoverflowclient.inject.ApplicationComponent;
 import com.ziomacki.stackoverflowclient.inject.DaggerSearchComponent;
 import com.ziomacki.stackoverflowclient.inject.SearchModule;
 import com.ziomacki.stackoverflowclient.search.model.Order;
-import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.presenter.SearchPresenter;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SearchActivity extends AppCompatActivity implements SearchView {
     private static final String FRAGMENT_TAG = "results_tag";
 
-    @Bind(R.id.search_main_container)
+    @BindView(R.id.search_main_container)
     RelativeLayout mainContainer;
-    @Bind(R.id.search_edit_text)
+    @BindView(R.id.search_edit_text)
     EditText searchEditText;
-    @Bind(R.id.search_button)
+    @BindView(R.id.search_button)
     ImageButton searchButton;
-    @Bind(R.id.search_fragment_container)
-    SwipeRefreshLayout swipeRefreshLayout;
-    @Bind(R.id.search_order)
+    @BindView(R.id.search_order)
     Spinner orderSpinner;
-    @Bind(R.id.search_sort)
+    @BindView(R.id.search_sort)
     Spinner sortSpinner;
     @Inject
     SearchPresenter searchPresenter;
 
-    private ResultsFragment resultsFragment;
+    private SearchResultsFragment searchResultsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +57,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     private void initViews() {
         addResultsFragment();
-        setupRefreshLayout();
         setupOrderSpinner();
         setupSortSpinner();
+        searchEditText.clearFocus();
     }
 
     private void initPresenter(Bundle savedInstanceState) {
@@ -71,21 +67,13 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         searchPresenter.setInitialQueryParamsIfNotRecreated(savedInstanceState);
     }
 
-    private void setupRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                searchPresenter.refresh();
-            }
-        });
-    }
 
     private void addResultsFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        resultsFragment = (ResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
-        if (resultsFragment == null) {
-            resultsFragment = ResultsFragment.getInstance();
-            fragmentManager.beginTransaction().add(R.id.search_fragment_container, resultsFragment, FRAGMENT_TAG).commit();
+        searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
+        if (searchResultsFragment == null) {
+            searchResultsFragment = SearchResultsFragment.getInstance();
+            fragmentManager.beginTransaction().add(R.id.search_fragment_container, searchResultsFragment, FRAGMENT_TAG).commit();
         }
     }
 
@@ -109,6 +97,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     @OnClick(R.id.search_button)
     public void onSearchButtonClick() {
         search();
+        closeKeyboard();
     }
 
     private void search() {
@@ -118,9 +107,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         searchPresenter.search(queryString, order, sort);
     }
 
-    @Override
-    public void displayErrorMessage() {
-        displaySnackbar(getString(R.string.search_error_message));
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+        mainContainer.requestFocus();
+
     }
 
     private void displaySnackbar(String message) {
@@ -128,28 +119,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     }
 
     @Override
-    public void displaySearchResults(List<SearchResultItem> results) {
-        resultsFragment.setResults(results);
-    }
-
-    @Override
-    public void displayNoResultsMessage() {
-        displaySnackbar(getString(R.string.search_no_results));
-    }
-
-    @Override
     public void setQuery(String query) {
         searchEditText.setText(query);
-    }
-
-    @Override
-    public void displayDataLoading() {
-        swipeRefreshLayout.setRefreshing(true);
-    }
-
-    @Override
-    public void hideDataLoading() {
-        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -163,7 +134,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         setSpinnerSelection(orderSpinner, position);
     }
 
-    private void setSpinnerSelection(Spinner spinner, int position){
+    private void setSpinnerSelection(Spinner spinner, int position) {
         if (position != -1) {
             spinner.setSelection(position);
         }

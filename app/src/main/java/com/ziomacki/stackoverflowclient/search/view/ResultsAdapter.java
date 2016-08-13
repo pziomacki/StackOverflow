@@ -5,8 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.ziomacki.stackoverflowclient.R;
@@ -14,29 +12,10 @@ import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
-public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultsViewHolder> {
+public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
 
     private List<SearchResultItem> resultItemList;
 
-    public static class ResultsViewHolder extends RecyclerView.ViewHolder {
-
-        @Bind(R.id.result_item_title)
-        TextView resultItemTitle;
-        @Bind(R.id.result_item_count)
-        TextView answersCount;
-        @Bind(R.id.result_item_name)
-        TextView ownerName;
-        @Bind(R.id.result_item_avatar)
-        ImageView avatar;
-
-        public ResultsViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
 
     public void setResult(List<SearchResultItem> resultItemList) {
         this.resultItemList = resultItemList;

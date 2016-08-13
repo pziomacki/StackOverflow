@@ -2,37 +2,37 @@ package com.ziomacki.stackoverflowclient.search.presenter;
 
 import android.os.Bundle;
 
+import com.ziomacki.stackoverflowclient.search.eventbus.SearchEvent;
 import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
-import com.ziomacki.stackoverflowclient.search.model.Search;
-import com.ziomacki.stackoverflowclient.search.model.SearchResults;
 import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class SearchPresenter {
 
-    private Search search;
+
     private SearchView searchView;
     private QueryParamsRepository queryParamsRepository;
-    private QueryParams queryParams;
     private QueryValidator queryValidator;
     private CompositeSubscription subscriptions = new CompositeSubscription();
+    private EventBus eventBus;
 
     @Inject
-    public SearchPresenter(Search search, QueryParamsRepository queryParamsRepository, QueryValidator queryValidator) {
-        this.search = search;
+    public SearchPresenter(QueryParamsRepository queryParamsRepository, QueryValidator queryValidator,
+                           EventBus eventBus) {
         this.queryParamsRepository = queryParamsRepository;
         this.queryValidator = queryValidator;
+        this.eventBus = eventBus;
     }
 
     public void setInitialQueryParamsIfNotRecreated(final Bundle savedInstance) {
@@ -49,15 +49,15 @@ public class SearchPresenter {
         subscriptions.add(subscription);
     }
 
-    public void search(String query, Order order, Sort sort){
+    public void search(String query, Order order, Sort sort) {
         if (isQueryStringValid(query)) {
-            queryParams = new QueryParams.Builder()
+            QueryParams queryParams = new QueryParams.Builder()
                     .query(query)
                     .order(order)
                     .sort(sort)
                     .build();
             storeQueryParams(queryParams);
-            search(queryParams);
+            eventBus.post(new SearchEvent(queryParams));
         }
     }
 
@@ -70,40 +70,11 @@ public class SearchPresenter {
         }
     }
 
-    private void search(QueryParams queryParams) {
-        searchView.displayDataLoading();
-        Subscription subscription = search.startSearch(queryParams)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<SearchResults>() {
-                    @Override
-                    public void call(SearchResults searchResults) {
-                        handleSuccesfullResponse(searchResults);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        //TODO: handle specific messages
-                        searchView.hideDataLoading();
-                        searchView.displayErrorMessage();
-                    }
-                });
-        subscriptions.add(subscription);
-    }
 
     private void storeQueryParams(QueryParams queryParams) {
         queryParamsRepository.saveQueryParams(queryParams);
     }
 
-    private void handleSuccesfullResponse(SearchResults searchResults) {
-        searchView.hideDataLoading();
-        if (searchResults.getSearchResultItemList().size() > 0) {
-            searchView.displaySearchResults(searchResults.getSearchResultItemList());
-        } else {
-            searchView.displayNoResultsMessage();
-        }
-    }
 
     public void attachView(SearchView searchView) {
         this.searchView = searchView;
@@ -111,11 +82,9 @@ public class SearchPresenter {
 
     public void onStop() {
         if (subscriptions != null && !subscriptions.isUnsubscribed()) {
-            subscriptions.unsubscribe();
+            subscriptions.clear();
         }
     }
 
-    public void refresh() {
-        search(queryParams);
-    }
+
 }
