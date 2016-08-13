@@ -47,7 +47,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     @Inject
     SearchPresenter searchPresenter;
 
-    private ResultsFragment resultsFragment;
+    private SearchResultsFragment searchResultsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +82,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     private void addResultsFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        resultsFragment = (ResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
-        if (resultsFragment == null) {
-            resultsFragment = ResultsFragment.getInstance();
-            fragmentManager.beginTransaction().add(R.id.search_fragment_container, resultsFragment, FRAGMENT_TAG).commit();
+        searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
+        if (searchResultsFragment == null) {
+            searchResultsFragment = SearchResultsFragment.getInstance();
+            fragmentManager.beginTransaction().add(R.id.search_fragment_container, searchResultsFragment, FRAGMENT_TAG).commit();
         }
     }
 
@@ -129,7 +129,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     @Override
     public void displaySearchResults(List<SearchResultItem> results) {
-        resultsFragment.setResults(results);
+        searchResultsFragment.setResults(results);
     }
 
     @Override

@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ResultsFragment extends Fragment implements ResultsView {
+public class SearchResultsFragment extends Fragment implements ResultsView {
 
     @Inject
     ResultsPresenter resultsPresenter;
@@ -30,8 +30,8 @@ public class ResultsFragment extends Fragment implements ResultsView {
 
     private ResultsAdapter resultsAdapter;
 
-    public static ResultsFragment getInstance() {
-        return new ResultsFragment();
+    public static SearchResultsFragment getInstance() {
+        return new SearchResultsFragment();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ResultsFragment extends Fragment implements ResultsView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_results, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_search, container, false);
         ButterKnife.bind(this, rootView);
         initRecyclerView();
         resultsPresenter.attachView(this);

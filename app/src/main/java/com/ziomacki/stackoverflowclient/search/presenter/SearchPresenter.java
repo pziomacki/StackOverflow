@@ -111,7 +111,7 @@ public class SearchPresenter {
 
     public void onStop() {
         if (subscriptions != null && !subscriptions.isUnsubscribed()) {
-            subscriptions.unsubscribe();
+            subscriptions.clear();
         }
     }
 
