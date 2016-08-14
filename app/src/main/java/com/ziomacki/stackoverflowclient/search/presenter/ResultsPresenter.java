@@ -28,15 +28,13 @@ public class ResultsPresenter {
     private ResultsView resultsView;
 
     private Search search;
-    private QueryParamsRepository queryParamsRepository;
     private QueryParams queryParams;
     private CompositeSubscription subscriptions = new CompositeSubscription();
     private EventBus eventBus;
 
     @Inject
-    public ResultsPresenter(Search search, QueryParamsRepository queryParamsRepository, EventBus eventBus) {
+    public ResultsPresenter(Search search,  EventBus eventBus) {
         this.search = search;
-        this.queryParamsRepository = queryParamsRepository;
         this.eventBus = eventBus;
     }
 

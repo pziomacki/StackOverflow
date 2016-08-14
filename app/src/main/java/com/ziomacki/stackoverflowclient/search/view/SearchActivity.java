@@ -41,8 +41,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
     @Inject
     SearchPresenter searchPresenter;
 
-    private SearchResultsFragment searchResultsFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +72,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
 
     private void addResultsFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
+        SearchResultsFragment searchResultsFragment =
+                (SearchResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (searchResultsFragment == null) {
             searchResultsFragment = SearchResultsFragment.getInstance();
             fragmentManager.beginTransaction().add(R.id.search_fragment_container, searchResultsFragment, FRAGMENT_TAG).commit();

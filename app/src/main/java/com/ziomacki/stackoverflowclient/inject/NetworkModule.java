@@ -20,22 +20,19 @@ public class NetworkModule {
     @ApplicationScope
     public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
         String endpointUrl = BuildConfig.stackExchangeUrl;
-        Retrofit retrofit = new Retrofit.Builder()
+        return new Retrofit.Builder()
                 .baseUrl(endpointUrl)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
-
-        return retrofit;
     }
 
     @Provides
     public OkHttpClient provideOkHttpClient() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(BuildConfig.DEBUG ? BODY : NONE);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-        return client;
+        return new OkHttpClient.Builder().addInterceptor(interceptor).build();
     }
 
 }
