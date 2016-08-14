@@ -24,8 +24,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
     public ResultsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.result_item_view, parent, false);
-        ResultsViewHolder viewHolder = new ResultsViewHolder(view);
-        return viewHolder;
+        return new ResultsViewHolder(view);
     }
 
     @Override

@@ -48,19 +48,19 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
 
     private void loadAvatar(ImageView imageView, Context context) {
         String imageUrl = resultItem.getOwner().getProfileImage();
-        if (!isEmptyString(imageUrl)) {
+        if (isStringNotEmpty(imageUrl)) {
             Picasso.with(context)
                     .load(resultItem.getOwner().getProfileImage())
                     .into(imageView);
         }
     }
 
-    private boolean isEmptyString(String string) {
-        return string == null || string.equals("");
+    private boolean isStringNotEmpty(String string) {
+        return string != null && string.equals("");
     }
 
     private void setOnclickListener() {
-        if (!isEmptyString(resultItem.getLink())) {
+        if (isStringNotEmpty(resultItem.getLink())) {
             mainContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

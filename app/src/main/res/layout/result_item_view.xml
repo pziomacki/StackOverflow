@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/result_item_name"
         android:maxLines="1"
         android:textSize="@dimen/result_item_text_size"/>
 
