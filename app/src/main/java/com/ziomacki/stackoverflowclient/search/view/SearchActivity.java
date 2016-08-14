@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.ziomacki.stackoverflowclient.R;
@@ -25,21 +24,20 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class SearchActivity extends AppCompatActivity implements SearchView {
+public class SearchActivity extends AppCompatActivity implements SearchView, android.support.v7.widget.SearchView.OnQueryTextListener {
     private static final String FRAGMENT_TAG = "results_tag";
 
     @BindView(R.id.search_main_container)
-    RelativeLayout mainContainer;
-    @BindView(R.id.search_edit_text)
-    EditText searchEditText;
-    @BindView(R.id.search_button)
-    ImageButton searchButton;
+    ViewGroup mainContainer;
     @BindView(R.id.search_order)
     Spinner orderSpinner;
     @BindView(R.id.search_sort)
     Spinner sortSpinner;
+    @BindView(R.id.search_search_view)
+    android.support.v7.widget.SearchView searchView;
+    @BindView(R.id.search_toolbar)
+    Toolbar toolbar;
     @Inject
     SearchPresenter searchPresenter;
 
@@ -59,7 +57,13 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         addResultsFragment();
         setupOrderSpinner();
         setupSortSpinner();
-        searchEditText.clearFocus();
+        setSupportActionBar(toolbar);
+        setupSearchView();
+    }
+
+    private void setupSearchView() {
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(this);
     }
 
     private void initPresenter(Bundle savedInstanceState) {
@@ -94,14 +98,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         searchPresenter.onStop();
     }
 
-    @OnClick(R.id.search_button)
-    public void onSearchButtonClick() {
-        search();
-        closeKeyboard();
-    }
-
-    private void search() {
-        String queryString = searchEditText.getText().toString();
+    private void search(String queryString) {
         Order order = (Order) orderSpinner.getSelectedItem();
         Sort sort = (Sort) sortSpinner.getSelectedItem();
         searchPresenter.search(queryString, order, sort);
@@ -109,9 +106,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     private void closeKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
         mainContainer.requestFocus();
-
     }
 
     private void displaySnackbar(String message) {
@@ -120,7 +116,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
     @Override
     public void setQuery(String query) {
-        searchEditText.setText(query);
+        searchView.setQuery(query, false);
     }
 
     @Override
@@ -158,4 +154,15 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         sortSpinner.setAdapter(sortArrayAdapter);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        search(query);
+        closeKeyboard();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
 }
