@@ -2,7 +2,6 @@ package com.ziomacki.stackoverflowclient.search.presenter;
 
 import com.ziomacki.stackoverflowclient.search.eventbus.SearchEvent;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
-import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
@@ -32,6 +31,29 @@ public class ResultsPresenter {
     private CompositeSubscription subscriptions = new CompositeSubscription();
     private EventBus eventBus;
 
+    private Action1 fetchSuccesfulResonseAction = new Action1<SearchResults>() {
+        @Override
+        public void call(SearchResults searchResults) {
+            resultsView.hideDataLoading();
+            if (searchResults.getSearchResultItemList().size() > 0) {
+                searchResultItemList = searchResults.getSearchResultItemList();
+                resultsView.displayResults(searchResultItemList);
+            } else {
+                resultsView.displayNoResultsMessage();
+            }
+        }
+    };
+
+    private Action1 fetchErrorAction = new Action1<Throwable>() {
+        @Override
+        public void call(Throwable throwable) {
+            throwable.printStackTrace();
+            //TODO: handle specific messages
+            resultsView.hideDataLoading();
+            resultsView.displayErrorMessage();
+        }
+    };
+
     @Inject
     public ResultsPresenter(Search search,  EventBus eventBus) {
         this.search = search;
@@ -40,9 +62,17 @@ public class ResultsPresenter {
 
     public void attachView(ResultsView resultsView) {
         this.resultsView = resultsView;
+        displayResutlsIfAvailable(resultsView);
+        initRefreshFeature();
+    }
+
+    private void displayResutlsIfAvailable(ResultsView resultsView) {
         if (searchResultItemList != null) {
             resultsView.displayResults(searchResultItemList);
         }
+    }
+
+    private void initRefreshFeature() {
         if (queryParams == null) {
             disableRefresh();
         } else {
@@ -65,31 +95,8 @@ public class ResultsPresenter {
         Subscription subscription = search.startSearch(queryParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<SearchResults>() {
-                    @Override
-                    public void call(SearchResults searchResults) {
-                        handleSuccesfullResponse(searchResults);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        //TODO: handle specific messages
-                        resultsView.hideDataLoading();
-                        resultsView.displayErrorMessage();
-                    }
-                });
+                .subscribe(fetchSuccesfulResonseAction, fetchErrorAction);
         subscriptions.add(subscription);
-    }
-
-    private void handleSuccesfullResponse(SearchResults searchResults) {
-        resultsView.hideDataLoading();
-        if (searchResults.getSearchResultItemList().size() > 0) {
-            searchResultItemList = searchResults.getSearchResultItemList();
-            resultsView.displayResults(searchResultItemList);
-        } else {
-            resultsView.displayNoResultsMessage();
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -112,6 +119,5 @@ public class ResultsPresenter {
         eventBus.unregister(this);
 
     }
-
 
 }

@@ -14,7 +14,6 @@ import android.widget.Spinner;
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.StackOverflowApplication;
 import com.ziomacki.stackoverflowclient.inject.ApplicationComponent;
-import com.ziomacki.stackoverflowclient.inject.DaggerSearchComponent;
 import com.ziomacki.stackoverflowclient.inject.SearchModule;
 import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.Sort;
@@ -84,11 +83,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
         ApplicationComponent applicationComponent =
                 ((StackOverflowApplication) getApplication()).getApplicationComponent();
 
-        DaggerSearchComponent.builder()
-                .applicationComponent(applicationComponent)
-                .searchModule(new SearchModule())
-                .build()
-                .inject(this);
+        applicationComponent.searchComponent(new SearchModule()).inject(this);
     }
 
     @Override
