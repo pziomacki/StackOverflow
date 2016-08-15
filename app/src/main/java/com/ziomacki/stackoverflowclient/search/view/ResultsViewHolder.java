@@ -56,7 +56,7 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
     }
 
     private boolean isStringNotEmpty(String string) {
-        return string != null && string.equals("");
+        return string != null && !string.equals("");
     }
 
     private void setOnclickListener() {
