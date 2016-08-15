@@ -1,5 +1,6 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
+import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
 import com.ziomacki.stackoverflowclient.search.eventbus.SearchEvent;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.Search;
@@ -102,6 +103,11 @@ public class ResultsPresenter {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSearchEvent(SearchEvent searchEvent) {
         search(searchEvent.queryParams);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onResultItemClickEvent(ResultItemClickEvent resultItemClickEvent) {
+        resultsView.displayDetails(resultItemClickEvent.detailsUrl);
     }
 
     public void refresh() {

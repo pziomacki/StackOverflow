@@ -1,5 +1,7 @@
 package com.ziomacki.stackoverflowclient.search.view;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -33,7 +35,8 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     RecyclerView resultsRecyclerView;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
-    private ResultsAdapter resultsAdapter;
+    @Inject
+    ResultsAdapter resultsAdapter;
 
     public static SearchResultsFragment getInstance() {
         return new SearchResultsFragment();
@@ -65,7 +68,6 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         ListDivider listDivider = new ListDivider(getContext());
         resultsRecyclerView.setLayoutManager(linearLayoutManager);
-        resultsAdapter = new ResultsAdapter();
         resultsRecyclerView.setAdapter(resultsAdapter);
         resultsRecyclerView.addItemDecoration(listDivider);
     }
@@ -129,5 +131,11 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     @Override
     public void disableRefresh() {
         swipeRefreshLayout.setEnabled(false);
+    }
+
+    @Override
+    public void displayDetails(String detailsUrl) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(detailsUrl));
+        getActivity().startActivity(intent);
     }
 }
