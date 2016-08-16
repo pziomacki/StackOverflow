@@ -7,15 +7,11 @@ import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
 import com.ziomacki.stackoverflowclient.search.view.ResultsView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -26,7 +22,6 @@ public class ResultsPresenter {
 
     private List<SearchResultItem> searchResultItemList;
     private ResultsView resultsView;
-
     private Search search;
     private QueryParams queryParams;
     private CompositeSubscription subscriptions = new CompositeSubscription();
@@ -48,7 +43,6 @@ public class ResultsPresenter {
     private Action1 fetchErrorAction = new Action1<Throwable>() {
         @Override
         public void call(Throwable throwable) {
-            throwable.printStackTrace();
             //TODO: handle specific messages
             resultsView.hideDataLoading();
             resultsView.displayErrorMessage();
@@ -56,7 +50,7 @@ public class ResultsPresenter {
     };
 
     @Inject
-    public ResultsPresenter(Search search,  EventBus eventBus) {
+    public ResultsPresenter(Search search, EventBus eventBus) {
         this.search = search;
         this.eventBus = eventBus;
     }
@@ -119,9 +113,7 @@ public class ResultsPresenter {
     }
 
     public void onStop() {
-        if (subscriptions != null && !subscriptions.isUnsubscribed()) {
-            subscriptions.clear();
-        }
+        subscriptions.clear();
         eventBus.unregister(this);
 
     }

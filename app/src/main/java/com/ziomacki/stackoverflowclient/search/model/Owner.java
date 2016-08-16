@@ -12,15 +12,7 @@ public class Owner {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public String getProfileImage() {
         return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
     }
 }

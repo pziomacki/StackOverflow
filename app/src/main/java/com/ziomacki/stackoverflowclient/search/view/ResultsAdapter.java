@@ -10,13 +10,14 @@ import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
 
-    private List<SearchResultItem> resultItemList;
+    private List<SearchResultItem> resultItemList = Collections.emptyList();
     private EventBus eventBus;
     
     @Inject
@@ -44,6 +45,6 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
 
     @Override
     public int getItemCount() {
-        return resultItemList == null ? 0 : resultItemList.size();
+        return resultItemList.size();
     }
 }

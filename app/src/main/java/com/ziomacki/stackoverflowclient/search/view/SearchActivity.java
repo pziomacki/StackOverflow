@@ -100,7 +100,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
         searchPresenter.search(queryString, order, sort);
     }
 
-    private void closeKeyboard() {
+    @Override
+    public void closeKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
         mainContainer.requestFocus();
@@ -153,7 +154,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
     @Override
     public boolean onQueryTextSubmit(String query) {
         search(query);
-        closeKeyboard();
         return true;
     }
 
@@ -165,6 +165,5 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
     @OnClick(R.id.search_btn)
     public void onSearchButtonClick(View view) {
         search(searchView.getQuery().toString());
-        closeKeyboard();
     }
 }

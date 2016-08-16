@@ -51,17 +51,7 @@ public class QueryParams {
         return order;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
     public Sort getSort() {
         return sort;
     }
-
-    public void setSort(Sort sort) {
-        this.sort = sort;
-    }
-
-
 }

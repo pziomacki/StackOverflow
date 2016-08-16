@@ -10,4 +10,5 @@ public interface SearchView {
     void setOrder(Order order);
     void setSort(Sort sort);
     void displayEmptyQueryMessage();
+    void closeKeyboard();
 }

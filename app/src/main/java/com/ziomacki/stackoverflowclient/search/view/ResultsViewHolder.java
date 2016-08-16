@@ -64,12 +64,22 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
 
     private void setOnclickListener() {
         if (isStringNotEmpty(resultItem.getLink())) {
-            mainContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    eventBus.post(new ResultItemClickEvent(resultItem.getLink()));
-                }
-            });
+            mainContainer.setOnClickListener(new OnResultsItemClickListener(eventBus, resultItem.getLink()));
+        }
+    }
+
+    private static class OnResultsItemClickListener implements View.OnClickListener {
+        private String url;
+        private EventBus eventBus;
+
+        public OnResultsItemClickListener(EventBus eventBus, String url) {
+            this.url = url;
+            this.eventBus = eventBus;
+        }
+
+        @Override
+        public void onClick(View view) {
+            eventBus.post(new ResultItemClickEvent(url));
         }
     }
 }

@@ -16,5 +16,4 @@ public class QueryValidator {
             return QUERY_OK;
         }
     }
-
 }
