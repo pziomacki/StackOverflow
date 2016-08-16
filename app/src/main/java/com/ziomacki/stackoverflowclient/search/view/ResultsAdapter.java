@@ -8,12 +8,21 @@ import android.view.ViewGroup;
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
 
     private List<SearchResultItem> resultItemList;
-
+    private EventBus eventBus;
+    
+    @Inject
+    public ResultsAdapter(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
     public void setResult(List<SearchResultItem> resultItemList) {
         this.resultItemList = resultItemList;
@@ -24,7 +33,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
     public ResultsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.result_item_view, parent, false);
-        return new ResultsViewHolder(view);
+        return new ResultsViewHolder(view, eventBus);
     }
 
     @Override

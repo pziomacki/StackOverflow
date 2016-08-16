@@ -1,8 +1,6 @@
 package com.ziomacki.stackoverflowclient.search.view;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,7 +9,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.ziomacki.stackoverflowclient.R;
+import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,11 +30,13 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.result_item_container)
     RelativeLayout mainContainer;
 
-    SearchResultItem resultItem;
+    private SearchResultItem resultItem;
+    private EventBus eventBus;
 
-    public ResultsViewHolder(View itemView) {
+    public ResultsViewHolder(View itemView, EventBus eventBus) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        this.eventBus = eventBus;
     }
 
     public void bind(SearchResultItem resultItem) {
@@ -64,8 +67,7 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
             mainContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(resultItem.getLink()));
-                    view.getContext().startActivity(intent);
+                    eventBus.post(new ResultItemClickEvent(resultItem.getLink()));
                 }
             });
         }

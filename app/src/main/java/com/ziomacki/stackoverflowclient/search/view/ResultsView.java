@@ -13,5 +13,5 @@ public interface ResultsView {
     void hideDataLoading();
     void disableRefresh();
     void enableRefresh();
-
+    void displayDetails(String detailsUrl);
 }
