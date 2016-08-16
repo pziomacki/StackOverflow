@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SearchActivity extends AppCompatActivity implements SearchView, android.support.v7.widget.SearchView.OnQueryTextListener {
     private static final String FRAGMENT_TAG = "results_tag";
@@ -158,5 +160,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
     @Override
     public boolean onQueryTextChange(String newText) {
         return false;
+    }
+
+    @OnClick(R.id.search_btn)
+    public void onSearchButtonClick(View view) {
+        search(searchView.getQuery().toString());
+        closeKeyboard();
     }
 }
