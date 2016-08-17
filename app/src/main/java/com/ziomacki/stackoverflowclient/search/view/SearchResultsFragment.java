@@ -12,18 +12,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.StackOverflowApplication;
 import com.ziomacki.stackoverflowclient.inject.ApplicationComponent;
 import com.ziomacki.stackoverflowclient.inject.SearchModule;
+import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
+import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.presenter.ResultsPresenter;
-
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -37,6 +39,8 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     SwipeRefreshLayout swipeRefreshLayout;
     @Inject
     ResultsAdapter resultsAdapter;
+    @Inject
+    EventBus eventBus;
 
     public static SearchResultsFragment getInstance() {
         return new SearchResultsFragment();
@@ -45,8 +49,6 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-
         ApplicationComponent applicationComponent =
                 ((StackOverflowApplication) getActivity().getApplication()).getApplicationComponent();
         applicationComponent.searchComponent(new SearchModule()).inject(this);
@@ -59,6 +61,7 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
         ButterKnife.bind(this, rootView);
         initRecyclerView();
         resultsPresenter.attachView(this);
+        resultsPresenter.recreate(savedInstanceState);
         setupRefreshLayout();
         return rootView;
     }
@@ -66,7 +69,8 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     private void initRecyclerView() {
         resultsRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        ListDivider listDivider = new ListDivider(getContext());
+        HorizontalDividerItemDecoration listDivider = new HorizontalDividerItemDecoration
+                .Builder(getActivity()).build();
         resultsRecyclerView.setLayoutManager(linearLayoutManager);
         resultsRecyclerView.setAdapter(resultsAdapter);
         resultsRecyclerView.addItemDecoration(listDivider);
@@ -84,13 +88,19 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     @Override
     public void onStart() {
         super.onStart();
-        resultsPresenter.onStart();
+        eventBus.register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        eventBus.unregister(this);
         resultsPresenter.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onResultItemClickEvent(ResultItemClickEvent resultItemClickEvent) {
+        resultsPresenter.resultItemSelected(resultItemClickEvent.detailsUrl);
     }
 
     @Override
@@ -103,6 +113,9 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
         Snackbar.make(swipeRefreshLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
+    public void search(QueryParams queryParams) {
+        resultsPresenter.search(queryParams);
+    }
 
     @Override
     public void displayErrorMessage() {
@@ -113,6 +126,7 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     public void displayNoResultsMessage() {
         displaySnackbar(getString(R.string.search_no_results));
     }
+
     @Override
     public void displayDataLoading() {
         swipeRefreshLayout.setRefreshing(true);

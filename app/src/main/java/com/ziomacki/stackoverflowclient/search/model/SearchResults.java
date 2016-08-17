@@ -1,7 +1,6 @@
 package com.ziomacki.stackoverflowclient.search.model;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class SearchResults {
@@ -10,7 +9,6 @@ public class SearchResults {
     private List<SearchResultItem> searchResultItemList;
     @SerializedName("has_more")
     private boolean hasMore;
-
 
     public List<SearchResultItem> getSearchResultItemList() {
         return searchResultItemList;
@@ -23,9 +21,4 @@ public class SearchResults {
     public boolean isHasMore() {
         return hasMore;
     }
-
-    public void setHasMore(boolean hasMore) {
-        this.hasMore = hasMore;
-    }
-
 }

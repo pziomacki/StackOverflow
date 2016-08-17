@@ -2,9 +2,7 @@ package com.ziomacki.stackoverflowclient.inject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.ziomacki.stackoverflowclient.search.model.SearchApiService;
-
 import dagger.Module;
 import dagger.Provides;
 import retrofit2.Retrofit;
@@ -21,5 +19,4 @@ public class SearchModule {
     public SharedPreferences provideSearchSharedPreferences(Context context) {
         return context.getSharedPreferences("search_preferences", Context.MODE_PRIVATE);
     }
-
 }

@@ -1,7 +1,6 @@
 package com.ziomacki.stackoverflowclient;
 
 import android.app.Application;
-
 import com.ziomacki.stackoverflowclient.inject.ApplicationComponent;
 import com.ziomacki.stackoverflowclient.inject.ApplicationModule;
 import com.ziomacki.stackoverflowclient.inject.DaggerApplicationComponent;

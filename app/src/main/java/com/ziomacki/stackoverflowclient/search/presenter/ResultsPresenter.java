@@ -1,24 +1,18 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
-import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
-import com.ziomacki.stackoverflowclient.search.eventbus.SearchEvent;
+import android.os.Bundle;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
+import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
 import com.ziomacki.stackoverflowclient.search.view.ResultsView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -26,11 +20,10 @@ public class ResultsPresenter {
 
     private List<SearchResultItem> searchResultItemList;
     private ResultsView resultsView;
-
     private Search search;
     private QueryParams queryParams;
     private CompositeSubscription subscriptions = new CompositeSubscription();
-    private EventBus eventBus;
+    private QueryParamsRepository queryParamsRepository;
 
     private Action1 fetchSuccesfulResonseAction = new Action1<SearchResults>() {
         @Override
@@ -48,7 +41,6 @@ public class ResultsPresenter {
     private Action1 fetchErrorAction = new Action1<Throwable>() {
         @Override
         public void call(Throwable throwable) {
-            throwable.printStackTrace();
             //TODO: handle specific messages
             resultsView.hideDataLoading();
             resultsView.displayErrorMessage();
@@ -56,15 +48,31 @@ public class ResultsPresenter {
     };
 
     @Inject
-    public ResultsPresenter(Search search,  EventBus eventBus) {
+    public ResultsPresenter(Search search, QueryParamsRepository queryParamsRepository) {
         this.search = search;
-        this.eventBus = eventBus;
+        this.queryParamsRepository = queryParamsRepository;
     }
 
     public void attachView(ResultsView resultsView) {
         this.resultsView = resultsView;
         displayResutlsIfAvailable(resultsView);
         initRefreshFeature();
+    }
+
+    public void recreate(final Bundle savedInstanceState) {
+        Subscription subscription = queryParamsRepository.getQueryParamsObservable()
+                .filter(new Func1<QueryParams, Boolean>() {
+                    @Override
+                    public Boolean call(QueryParams queryParams) {
+                        return savedInstanceState != null;
+                    }
+                })
+                .subscribe(new Action1<QueryParams>() {
+                    @Override
+                    public void call(QueryParams queryParams) {
+                        search(queryParams);
+                    }
+                });
     }
 
     private void displayResutlsIfAvailable(ResultsView resultsView) {
@@ -89,7 +97,7 @@ public class ResultsPresenter {
         resultsView.disableRefresh();
     }
 
-    private void search(QueryParams queryParams) {
+    public void search(QueryParams queryParams) {
         this.queryParams = queryParams;
         enableRefresh();
         resultsView.displayDataLoading();
@@ -100,30 +108,15 @@ public class ResultsPresenter {
         subscriptions.add(subscription);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSearchEvent(SearchEvent searchEvent) {
-        search(searchEvent.queryParams);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultItemClickEvent(ResultItemClickEvent resultItemClickEvent) {
-        resultsView.displayDetails(resultItemClickEvent.detailsUrl);
+    public void resultItemSelected(String detailsUrl) {
+        resultsView.displayDetails(detailsUrl);
     }
 
     public void refresh() {
         search(queryParams);
     }
 
-    public void onStart() {
-        eventBus.register(this);
-    }
-
     public void onStop() {
-        if (subscriptions != null && !subscriptions.isUnsubscribed()) {
-            subscriptions.clear();
-        }
-        eventBus.unregister(this);
-
+        subscriptions.clear();
     }
-
 }

@@ -7,7 +7,8 @@ public class QueryValidator {
     public static final int EMPTY_QUERY = 1;
 
     @Inject
-    public QueryValidator(){}
+    public QueryValidator() {
+    }
 
     public int isQueryValid(String query) {
         if (query == null || query.equals("")) {
@@ -16,5 +17,4 @@ public class QueryValidator {
             return QUERY_OK;
         }
     }
-
 }

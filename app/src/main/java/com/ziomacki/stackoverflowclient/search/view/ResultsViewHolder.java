@@ -6,14 +6,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
-
 import org.greenrobot.eventbus.EventBus;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -32,29 +29,32 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
 
     private SearchResultItem resultItem;
     private EventBus eventBus;
+    private Context context;
 
-    public ResultsViewHolder(View itemView, EventBus eventBus) {
+    public ResultsViewHolder(View itemView, EventBus eventBus, Context context) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         this.eventBus = eventBus;
+        this.context = context;
     }
 
     public void bind(SearchResultItem resultItem) {
         this.resultItem = resultItem;
         resultItemTitle.setText(resultItem.getTitle());
-        Context context = avatar.getContext();
         answersCount.setText(context.getString(R.string.result_answer_count, resultItem.getAnswerCount()));
         ownerName.setText(resultItem.getOwner().getDisplayName());
-        loadAvatar(avatar, context);
+        loadAvatar(avatar);
         setOnclickListener();
     }
 
-    private void loadAvatar(ImageView imageView, Context context) {
+    private void loadAvatar(ImageView imageView) {
         String imageUrl = resultItem.getOwner().getProfileImage();
         if (isStringNotEmpty(imageUrl)) {
             Picasso.with(context)
                     .load(resultItem.getOwner().getProfileImage())
                     .into(imageView);
+        } else {
+            imageView.setImageDrawable(null);
         }
     }
 
@@ -64,12 +64,22 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
 
     private void setOnclickListener() {
         if (isStringNotEmpty(resultItem.getLink())) {
-            mainContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    eventBus.post(new ResultItemClickEvent(resultItem.getLink()));
-                }
-            });
+            mainContainer.setOnClickListener(new OnResultsItemClickListener(eventBus, resultItem.getLink()));
+        }
+    }
+
+    private static class OnResultsItemClickListener implements View.OnClickListener {
+        private String url;
+        private EventBus eventBus;
+
+        public OnResultsItemClickListener(EventBus eventBus, String url) {
+            this.url = url;
+            this.eventBus = eventBus;
+        }
+
+        @Override
+        public void onClick(View view) {
+            eventBus.post(new ResultItemClickEvent(url));
         }
     }
 }

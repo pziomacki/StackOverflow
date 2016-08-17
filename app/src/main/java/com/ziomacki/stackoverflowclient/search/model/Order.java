@@ -26,5 +26,4 @@ public enum Order {
         }
         return DESCENDING;
     }
-
 }

@@ -22,7 +22,7 @@
             android:background="@color/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <android.support.v7.widget.SearchView
+            <SearchView
                 android:id="@+id/search_search_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,13 +54,6 @@
                     android:id="@+id/search_order"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/search_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/search"
                     android:layout_weight="1"/>
             </LinearLayout>
 
