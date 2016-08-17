@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.StackOverflowApplication;
 import com.ziomacki.stackoverflowclient.inject.ApplicationComponent;
@@ -74,7 +75,8 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     private void initRecyclerView() {
         resultsRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        ListDivider listDivider = new ListDivider(getContext());
+        HorizontalDividerItemDecoration listDivider = new HorizontalDividerItemDecoration
+                .Builder(getActivity()).build();
         resultsRecyclerView.setLayoutManager(linearLayoutManager);
         resultsRecyclerView.setAdapter(resultsAdapter);
         resultsRecyclerView.addItemDecoration(listDivider);
