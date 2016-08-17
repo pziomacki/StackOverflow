@@ -1,6 +1,8 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
+import android.os.Bundle;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
+import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
@@ -10,6 +12,7 @@ import javax.inject.Inject;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -20,6 +23,7 @@ public class ResultsPresenter {
     private Search search;
     private QueryParams queryParams;
     private CompositeSubscription subscriptions = new CompositeSubscription();
+    private QueryParamsRepository queryParamsRepository;
 
     private Action1 fetchSuccesfulResonseAction = new Action1<SearchResults>() {
         @Override
@@ -44,14 +48,31 @@ public class ResultsPresenter {
     };
 
     @Inject
-    public ResultsPresenter(Search search) {
+    public ResultsPresenter(Search search, QueryParamsRepository queryParamsRepository) {
         this.search = search;
+        this.queryParamsRepository = queryParamsRepository;
     }
 
     public void attachView(ResultsView resultsView) {
         this.resultsView = resultsView;
         displayResutlsIfAvailable(resultsView);
         initRefreshFeature();
+    }
+
+    public void recreate(final Bundle savedInstanceState) {
+        Subscription subscription = queryParamsRepository.getQueryParamsObservable()
+                .filter(new Func1<QueryParams, Boolean>() {
+                    @Override
+                    public Boolean call(QueryParams queryParams) {
+                        return savedInstanceState != null;
+                    }
+                })
+                .subscribe(new Action1<QueryParams>() {
+                    @Override
+                    public void call(QueryParams queryParams) {
+                        search(queryParams);
+                    }
+                });
     }
 
     private void displayResutlsIfAvailable(ResultsView resultsView) {

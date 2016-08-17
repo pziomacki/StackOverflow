@@ -1,11 +1,9 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
 import android.os.Bundle;
-import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
-import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
 import javax.inject.Inject;
 import rx.Subscription;
@@ -25,39 +23,29 @@ public class SearchPresenter {
         this.queryValidator = queryValidator;
     }
 
+    public void onSaveInstance(QueryParams queryParams) {
+        storeQueryParams(queryParams);
+    }
+
     public void setInitialQueryParams(final Bundle savedInstance) {
         Subscription subscription = queryParamsRepository.getQueryParamsObservable()
                 .subscribe(new Action1<QueryParams>() {
                     @Override
                     public void call(QueryParams queryParams) {
-                        searchIfRecreated(savedInstance, queryParams);
-                        updateViewsIfNotRecreated(savedInstance, queryParams);
+                        updateViews(queryParams);
                     }
                 });
         subscriptions.add(subscription);
     }
 
-    private void searchIfRecreated(Bundle savedInstance, QueryParams queryParams) {
-        if (savedInstance != null) {
-            search(queryParams);
-        }
+    private void updateViews(QueryParams queryParams) {
+        searchView.initQuery(queryParams.getQuery());
+        searchView.initOrder(queryParams.getOrder());
+        searchView.initSort(queryParams.getSort());
     }
 
-    private void updateViewsIfNotRecreated(Bundle savedInstance, QueryParams queryParams) {
-        if (savedInstance == null) {
-            searchView.setQuery(queryParams.getQuery());
-            searchView.setOrder(queryParams.getOrder());
-            searchView.setSort(queryParams.getSort());
-        }
-    }
-
-    public void onSearchActionPerformed(String query, Order order, Sort sort) {
-        if (isQueryStringValid(query)) {
-            QueryParams queryParams = new QueryParams.Builder()
-                    .query(query)
-                    .order(order)
-                    .sort(sort)
-                    .build();
+    public void onSearchActionPerformed(QueryParams queryParams) {
+        if (isQueryStringValid(queryParams.getQuery())) {
             search(queryParams);
         } else {
             displayEmptyQueryMessage();

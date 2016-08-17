@@ -53,6 +53,8 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
             Picasso.with(context)
                     .load(resultItem.getOwner().getProfileImage())
                     .into(imageView);
+        } else {
+            imageView.setImageDrawable(null);
         }
     }
 
