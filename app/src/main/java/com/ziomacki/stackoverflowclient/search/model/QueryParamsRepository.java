@@ -1,9 +1,7 @@
 package com.ziomacki.stackoverflowclient.search.model;
 
 import android.content.SharedPreferences;
-
 import javax.inject.Inject;
-
 import rx.Observable;
 import rx.Subscriber;
 

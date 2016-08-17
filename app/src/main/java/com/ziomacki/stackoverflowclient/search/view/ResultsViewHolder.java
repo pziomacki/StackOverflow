@@ -6,14 +6,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
-
 import org.greenrobot.eventbus.EventBus;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

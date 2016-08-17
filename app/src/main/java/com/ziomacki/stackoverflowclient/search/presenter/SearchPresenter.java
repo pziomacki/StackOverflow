@@ -1,16 +1,13 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
 import android.os.Bundle;
-
 import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
 import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
-
 import javax.inject.Inject;
-
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;

@@ -1,7 +1,6 @@
 package com.ziomacki.stackoverflowclient.search.model;
 
 import javax.inject.Inject;
-
 import rx.Observable;
 
 public class Search {

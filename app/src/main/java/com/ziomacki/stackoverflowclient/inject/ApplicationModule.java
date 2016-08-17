@@ -1,11 +1,8 @@
 package com.ziomacki.stackoverflowclient.inject;
 
 import android.content.Context;
-
 import com.ziomacki.stackoverflowclient.search.eventbus.StackOverflowBusIndex;
-
 import org.greenrobot.eventbus.EventBus;
-
 import dagger.Module;
 import dagger.Provides;
 

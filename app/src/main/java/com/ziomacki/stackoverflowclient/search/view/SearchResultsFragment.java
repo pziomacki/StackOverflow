@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.StackOverflowApplication;
@@ -22,15 +21,11 @@ import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.presenter.ResultsPresenter;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -130,6 +125,7 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     public void displayNoResultsMessage() {
         displaySnackbar(getString(R.string.search_no_results));
     }
+
     @Override
     public void displayDataLoading() {
         swipeRefreshLayout.setRefreshing(true);

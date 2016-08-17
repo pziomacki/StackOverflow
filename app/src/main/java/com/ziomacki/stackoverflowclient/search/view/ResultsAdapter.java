@@ -5,15 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.util.Collections;
 import java.util.List;
-
 import javax.inject.Inject;
 
 public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
@@ -21,6 +17,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
     private List<SearchResultItem> resultItemList = Collections.emptyList();
     private EventBus eventBus;
     private Context context;
+
     @Inject
     public ResultsAdapter(Context context, EventBus eventBus) {
         this.context = context;
