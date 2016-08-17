@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import rx.Subscription;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 
 public class SearchPresenter {
@@ -29,39 +28,47 @@ public class SearchPresenter {
         this.queryValidator = queryValidator;
     }
 
-    public void setInitialQueryParamsIfNotRecreated(final Bundle savedInstance) {
+    public void setInitialQueryParams(final Bundle savedInstance) {
         Subscription subscription = queryParamsRepository.getQueryParamsObservable()
-                .filter(new Func1<QueryParams, Boolean>() {
-                    @Override
-                    public Boolean call(QueryParams queryParams) {
-                        return savedInstance == null;
-                    }
-                }).subscribe(new Action1<QueryParams>() {
+                .subscribe(new Action1<QueryParams>() {
                     @Override
                     public void call(QueryParams queryParams) {
-                        searchView.setQuery(queryParams.getQuery());
-                        searchView.setOrder(queryParams.getOrder());
-                        searchView.setSort(queryParams.getSort());
+                        searchIfRecreated(savedInstance, queryParams);
+                        updateViewsIfNotRecreated(savedInstance, queryParams);
                     }
                 });
         subscriptions.add(subscription);
     }
 
+    private void searchIfRecreated(Bundle savedInstance, QueryParams queryParams) {
+        if (savedInstance != null) {
+            search(queryParams);
+        }
+    }
+
+    private void updateViewsIfNotRecreated(Bundle savedInstance, QueryParams queryParams) {
+        if (savedInstance == null) {
+            searchView.setQuery(queryParams.getQuery());
+            searchView.setOrder(queryParams.getOrder());
+            searchView.setSort(queryParams.getSort());
+        }
+    }
+
     public void onSearchActionPerformed(String query, Order order, Sort sort) {
         if (isQueryStringValid(query)) {
-            search(query, order, sort);
+            QueryParams queryParams = new QueryParams.Builder()
+                    .query(query)
+                    .order(order)
+                    .sort(sort)
+                    .build();
+            search(queryParams);
         } else {
             displayEmptyQueryMessage();
         }
     }
 
-    private void search(String query, Order order, Sort sort) {
+    private void search(QueryParams queryParams) {
         searchView.closeKeyboard();
-        QueryParams queryParams = new QueryParams.Builder()
-                .query(query)
-                .order(order)
-                .sort(sort)
-                .build();
         storeQueryParams(queryParams);
         searchView.search(queryParams);
     }

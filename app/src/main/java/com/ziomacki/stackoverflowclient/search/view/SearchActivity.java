@@ -70,7 +70,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
 
     private void initPresenter(Bundle savedInstanceState) {
         searchPresenter.attachView(this);
-        searchPresenter.setInitialQueryParamsIfNotRecreated(savedInstanceState);
+        searchPresenter.setInitialQueryParams(savedInstanceState);
     }
 
 
