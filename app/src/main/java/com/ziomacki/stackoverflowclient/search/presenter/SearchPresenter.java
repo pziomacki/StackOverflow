@@ -40,8 +40,8 @@ public class SearchPresenter {
 
     private void updateViews(QueryParams queryParams) {
         searchView.initQuery(queryParams.getQuery());
-        searchView.initOrder(queryParams.getOrder());
-        searchView.initSort(queryParams.getSort());
+        searchView.initOrderValue(queryParams.getOrder());
+        searchView.initSortValue(queryParams.getSort());
     }
 
     public void onSearchActionPerformed(QueryParams queryParams) {

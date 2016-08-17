@@ -29,7 +29,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 
-public class SearchActivity extends AppCompatActivity implements SearchView, android.support.v7.widget.SearchView.OnQueryTextListener {
+public class SearchActivity extends AppCompatActivity implements SearchView {
     private static final String FRAGMENT_TAG = "results_tag";
 
     @BindView(R.id.search_main_container)
@@ -68,8 +68,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
 
     private void initViews() {
         addResultsFragment();
-        setupOrderSpinner();
-        setupSortSpinner();
+        setupOrderAdapter();
+        setSortAdapter();
         setSupportActionBar(toolbar);
         setupSearchView();
     }
@@ -90,7 +90,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
                 (SearchResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (searchResultsFragment == null) {
             searchResultsFragment = SearchResultsFragment.getInstance();
-            fragmentManager.beginTransaction().add(R.id.search_fragment_container, searchResultsFragment, FRAGMENT_TAG).commit();
+            fragmentManager.beginTransaction()
+                    .add(R.id.search_fragment_container, searchResultsFragment, FRAGMENT_TAG).commit();
         }
     }
 
@@ -152,26 +153,26 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
     }
 
     @Override
-    public void initSort(Sort sort) {
+    public void initSortValue(Sort sort) {
         int position = ((ArrayAdapter) sortSpinner.getAdapter()).getPosition(sort);
         setSpinnerSelection(sortSpinner, position);
         setSpinnerSubscriber(sortSpinner);
     }
 
     @Override
-    public void initOrder(Order order) {
+    public void initOrderValue(Order order) {
         int position = ((ArrayAdapter) orderSpinner.getAdapter()).getPosition(order);
         setSpinnerSelection(orderSpinner, position);
         setSpinnerSubscriber(orderSpinner);
     }
 
-    private void setupOrderSpinner() {
+    private void setupOrderAdapter() {
         ArrayAdapter<Order> orderArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item,
                 Order.values());
         orderSpinner.setAdapter(orderArrayAdapter);
     }
 
-    private void setupSortSpinner() {
+    private void setSortAdapter() {
         ArrayAdapter<Sort> sortArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item, Sort
                 .values());
         sortSpinner.setAdapter(sortArrayAdapter);
@@ -183,12 +184,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
         subscriptions.add(subscription);
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        onSearchAction();
-        return true;
-    }
-
     private QueryParams getQueryParams() {
         String query = searchView.getQuery().toString();
         Order order = (Order) orderSpinner.getSelectedItem();
@@ -198,11 +193,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
                 .order(order)
                 .sort(sort)
                 .build();
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
     }
 
     private class SearchQueryEdit implements Action1<SearchViewQueryTextEvent> {

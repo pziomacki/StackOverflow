@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 apply plugin: 'groovyx.grooid.groovy-android'
+apply plugin: 'realm-android'
 
 apt {
     arguments {
