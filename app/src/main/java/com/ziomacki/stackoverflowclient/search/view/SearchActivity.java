@@ -46,7 +46,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     SearchPresenter searchPresenter;
 
     private CompositeSubscription subscriptions = new CompositeSubscription();
-
     private SearchResultsFragment searchResultsFragment;
 
     @Override
