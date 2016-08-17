@@ -1,37 +1,35 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
-import android.os.Bundle;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
+import com.ziomacki.stackoverflowclient.search.model.SearchResultsRepository;
 import com.ziomacki.stackoverflowclient.search.view.ResultsView;
 import java.util.List;
 import javax.inject.Inject;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class ResultsPresenter {
 
-    private List<SearchResultItem> searchResultItemList;
     private ResultsView resultsView;
     private Search search;
     private QueryParams queryParams;
     private CompositeSubscription subscriptions = new CompositeSubscription();
     private QueryParamsRepository queryParamsRepository;
+    private SearchResultsRepository searchResultsRepository;
 
     private Action1 fetchSuccesfulResonseAction = new Action1<SearchResults>() {
         @Override
         public void call(SearchResults searchResults) {
             resultsView.hideDataLoading();
             if (searchResults.getSearchResultItemList().size() > 0) {
-                searchResultItemList = searchResults.getSearchResultItemList();
-                resultsView.displayResults(searchResultItemList);
+                displayResults(searchResults.getSearchResultItemList());
             } else {
                 resultsView.displayNoResultsMessage();
             }
@@ -48,39 +46,49 @@ public class ResultsPresenter {
     };
 
     @Inject
-    public ResultsPresenter(Search search, QueryParamsRepository queryParamsRepository) {
+    public ResultsPresenter(Search search, QueryParamsRepository queryParamsRepository,
+                            SearchResultsRepository searchResultsRepository) {
         this.search = search;
         this.queryParamsRepository = queryParamsRepository;
+        this.searchResultsRepository = searchResultsRepository;
     }
 
     public void attachView(ResultsView resultsView) {
         this.resultsView = resultsView;
-        displayResutlsIfAvailable(resultsView);
-        initRefreshFeature();
+        displayResutlsIfStored();
+        restoreQueryParams();
     }
 
-    public void recreate(final Bundle savedInstanceState) {
+    private void restoreQueryParams() {
         Subscription subscription = queryParamsRepository.getQueryParamsObservable()
-                .filter(new Func1<QueryParams, Boolean>() {
-                    @Override
-                    public Boolean call(QueryParams queryParams) {
-                        return savedInstanceState != null;
-                    }
-                })
                 .subscribe(new Action1<QueryParams>() {
                     @Override
                     public void call(QueryParams queryParams) {
-                        search(queryParams);
+                        setQueryParams(queryParams);
                     }
                 });
+        subscriptions.add(subscription);
     }
 
-    private void displayResutlsIfAvailable(ResultsView resultsView) {
-        if (searchResultItemList != null) {
-            resultsView.displayResults(searchResultItemList);
-        }
+    private void setQueryParams(QueryParams queryParams) {
+        this.queryParams = queryParams;
+        initRefreshFeature();
     }
 
+    private void displayResutlsIfStored() {
+        Subscription subscription = searchResultsRepository.getSearchResults().subscribe(new Action1<SearchResults>() {
+            @Override
+            public void call(SearchResults searchResults) {
+                if (searchResults.getSearchResultItemList() != null) {
+                    displayResults(searchResults.getSearchResultItemList());
+                }
+            }
+        });
+        subscriptions.add(subscription);
+    }
+    private void displayResults(List<SearchResultItem> resultItemList) {
+        resultsView.displayResults(resultItemList);
+    }
     private void initRefreshFeature() {
         if (queryParams == null) {
             disableRefresh();

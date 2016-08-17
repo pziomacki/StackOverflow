@@ -61,7 +61,6 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
         ButterKnife.bind(this, rootView);
         initRecyclerView();
         resultsPresenter.attachView(this);
-        resultsPresenter.recreate(savedInstanceState);
         setupRefreshLayout();
         return rootView;
     }

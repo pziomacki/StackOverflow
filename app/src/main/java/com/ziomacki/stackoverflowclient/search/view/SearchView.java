@@ -6,8 +6,8 @@ import com.ziomacki.stackoverflowclient.search.model.Sort;
 
 public interface SearchView {
     void initQuery(String query);
-    void initOrder(Order order);
-    void initSort(Sort sort);
+    void initOrderValue(Order order);
+    void initSortValue(Sort sort);
     void displayEmptyQueryMessage();
     void closeKeyboard();
     void search(QueryParams queryParams);

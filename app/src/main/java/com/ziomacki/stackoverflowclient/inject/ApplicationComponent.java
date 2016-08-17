@@ -5,7 +5,7 @@ import com.ziomacki.stackoverflowclient.StackOverflowApplication;
 import dagger.Component;
 
 @ApplicationScope
-@Component(modules = {ApplicationModule.class, NetworkModule.class})
+@Component(modules = {ApplicationModule.class, NetworkModule.class, StorageModule.class})
 public interface ApplicationComponent {
     void inject(StackOverflowApplication stackOverflowApplication);
 
