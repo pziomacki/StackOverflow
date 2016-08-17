@@ -34,5 +34,4 @@ public class NetworkModule {
         interceptor.setLevel(BuildConfig.DEBUG ? BODY : NONE);
         return new OkHttpClient.Builder().addInterceptor(interceptor).build();
     }
-
 }

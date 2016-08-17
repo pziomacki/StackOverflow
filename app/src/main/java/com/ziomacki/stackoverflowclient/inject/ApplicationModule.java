@@ -34,5 +34,4 @@ public class ApplicationModule {
     public EventBus provideEventBus() {
         return eventBus;
     }
-
 }

@@ -17,8 +17,14 @@ import com.ziomacki.stackoverflowclient.R;
 import com.ziomacki.stackoverflowclient.StackOverflowApplication;
 import com.ziomacki.stackoverflowclient.inject.ApplicationComponent;
 import com.ziomacki.stackoverflowclient.inject.SearchModule;
+import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
+import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.presenter.ResultsPresenter;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -37,6 +43,8 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     SwipeRefreshLayout swipeRefreshLayout;
     @Inject
     ResultsAdapter resultsAdapter;
+    @Inject
+    EventBus eventBus;
 
     public static SearchResultsFragment getInstance() {
         return new SearchResultsFragment();
@@ -84,13 +92,19 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     @Override
     public void onStart() {
         super.onStart();
-        resultsPresenter.onStart();
+        eventBus.register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        eventBus.unregister(this);
         resultsPresenter.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onResultItemClickEvent(ResultItemClickEvent resultItemClickEvent) {
+        resultsPresenter.resultItemSelected(resultItemClickEvent.detailsUrl);
     }
 
     @Override
@@ -103,6 +117,9 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
         Snackbar.make(swipeRefreshLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
+    public void search(QueryParams queryParams) {
+        resultsPresenter.search(queryParams);
+    }
 
     @Override
     public void displayErrorMessage() {

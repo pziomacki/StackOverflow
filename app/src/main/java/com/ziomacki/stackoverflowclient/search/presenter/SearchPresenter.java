@@ -2,15 +2,12 @@ package com.ziomacki.stackoverflowclient.search.presenter;
 
 import android.os.Bundle;
 
-import com.ziomacki.stackoverflowclient.search.eventbus.SearchEvent;
 import com.ziomacki.stackoverflowclient.search.model.Order;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.QueryParamsRepository;
 import com.ziomacki.stackoverflowclient.search.model.QueryValidator;
 import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.view.SearchView;
-
-import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
@@ -25,14 +22,11 @@ public class SearchPresenter {
     private QueryParamsRepository queryParamsRepository;
     private QueryValidator queryValidator;
     private CompositeSubscription subscriptions = new CompositeSubscription();
-    private EventBus eventBus;
 
     @Inject
-    public SearchPresenter(QueryParamsRepository queryParamsRepository, QueryValidator queryValidator,
-                           EventBus eventBus) {
+    public SearchPresenter(QueryParamsRepository queryParamsRepository, QueryValidator queryValidator) {
         this.queryParamsRepository = queryParamsRepository;
         this.queryValidator = queryValidator;
-        this.eventBus = eventBus;
     }
 
     public void setInitialQueryParamsIfNotRecreated(final Bundle savedInstance) {
@@ -53,19 +47,23 @@ public class SearchPresenter {
         subscriptions.add(subscription);
     }
 
-    public void search(String query, Order order, Sort sort) {
+    public void onSearchActionPerformed(String query, Order order, Sort sort) {
         if (isQueryStringValid(query)) {
-            searchView.closeKeyboard();
-            QueryParams queryParams = new QueryParams.Builder()
-                    .query(query)
-                    .order(order)
-                    .sort(sort)
-                    .build();
-            storeQueryParams(queryParams);
-            eventBus.post(new SearchEvent(queryParams));
+            search(query, order, sort);
         } else {
             displayEmptyQueryMessage();
         }
+    }
+
+    private void search(String query, Order order, Sort sort) {
+        searchView.closeKeyboard();
+        QueryParams queryParams = new QueryParams.Builder()
+                .query(query)
+                .order(order)
+                .sort(sort)
+                .build();
+        storeQueryParams(queryParams);
+        searchView.search(queryParams);
     }
 
     private boolean isQueryStringValid(String query) {

@@ -1,17 +1,15 @@
 package com.ziomacki.stackoverflowclient.search.presenter;
 
-import com.ziomacki.stackoverflowclient.search.eventbus.ResultItemClickEvent;
-import com.ziomacki.stackoverflowclient.search.eventbus.SearchEvent;
 import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.Search;
 import com.ziomacki.stackoverflowclient.search.model.SearchResultItem;
 import com.ziomacki.stackoverflowclient.search.model.SearchResults;
 import com.ziomacki.stackoverflowclient.search.view.ResultsView;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -25,7 +23,6 @@ public class ResultsPresenter {
     private Search search;
     private QueryParams queryParams;
     private CompositeSubscription subscriptions = new CompositeSubscription();
-    private EventBus eventBus;
 
     private Action1 fetchSuccesfulResonseAction = new Action1<SearchResults>() {
         @Override
@@ -50,9 +47,8 @@ public class ResultsPresenter {
     };
 
     @Inject
-    public ResultsPresenter(Search search, EventBus eventBus) {
+    public ResultsPresenter(Search search) {
         this.search = search;
-        this.eventBus = eventBus;
     }
 
     public void attachView(ResultsView resultsView) {
@@ -83,7 +79,7 @@ public class ResultsPresenter {
         resultsView.disableRefresh();
     }
 
-    private void search(QueryParams queryParams) {
+    public void search(QueryParams queryParams) {
         this.queryParams = queryParams;
         enableRefresh();
         resultsView.displayDataLoading();
@@ -94,28 +90,15 @@ public class ResultsPresenter {
         subscriptions.add(subscription);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSearchEvent(SearchEvent searchEvent) {
-        search(searchEvent.queryParams);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultItemClickEvent(ResultItemClickEvent resultItemClickEvent) {
-        resultsView.displayDetails(resultItemClickEvent.detailsUrl);
+    public void resultItemSelected(String detailsUrl) {
+        resultsView.displayDetails(detailsUrl);
     }
 
     public void refresh() {
         search(queryParams);
     }
 
-    public void onStart() {
-        eventBus.register(this);
-    }
-
     public void onStop() {
         subscriptions.clear();
-        eventBus.unregister(this);
-
     }
-
 }

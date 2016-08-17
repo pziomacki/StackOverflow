@@ -17,6 +17,7 @@ import com.ziomacki.stackoverflowclient.StackOverflowApplication;
 import com.ziomacki.stackoverflowclient.inject.ApplicationComponent;
 import com.ziomacki.stackoverflowclient.inject.SearchModule;
 import com.ziomacki.stackoverflowclient.search.model.Order;
+import com.ziomacki.stackoverflowclient.search.model.QueryParams;
 import com.ziomacki.stackoverflowclient.search.model.Sort;
 import com.ziomacki.stackoverflowclient.search.presenter.SearchPresenter;
 
@@ -41,6 +42,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
     Toolbar toolbar;
     @Inject
     SearchPresenter searchPresenter;
+
+    private SearchResultsFragment searchResultsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +76,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
 
     private void addResultsFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        SearchResultsFragment searchResultsFragment =
+        searchResultsFragment =
                 (SearchResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (searchResultsFragment == null) {
             searchResultsFragment = SearchResultsFragment.getInstance();
@@ -84,7 +87,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
     private void injectDependencies() {
         ApplicationComponent applicationComponent =
                 ((StackOverflowApplication) getApplication()).getApplicationComponent();
-
         applicationComponent.searchComponent(new SearchModule()).inject(this);
     }
 
@@ -94,10 +96,15 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
         searchPresenter.onStop();
     }
 
-    private void search(String queryString) {
+    private void onSearchAction(String queryString) {
         Order order = (Order) orderSpinner.getSelectedItem();
         Sort sort = (Sort) sortSpinner.getSelectedItem();
-        searchPresenter.search(queryString, order, sort);
+        searchPresenter.onSearchActionPerformed(queryString, order, sort);
+    }
+
+    @Override
+    public void search(QueryParams queryParams) {
+        searchResultsFragment.search(queryParams);
     }
 
     @Override
@@ -153,7 +160,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        search(query);
+        onSearchAction(query);
         return true;
     }
 
@@ -164,6 +171,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
 
     @OnClick(R.id.search_btn)
     public void onSearchButtonClick(View view) {
-        search(searchView.getQuery().toString());
+        onSearchAction(searchView.getQuery().toString());
     }
 }

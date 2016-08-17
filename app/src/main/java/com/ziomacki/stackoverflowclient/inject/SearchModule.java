@@ -21,5 +21,4 @@ public class SearchModule {
     public SharedPreferences provideSearchSharedPreferences(Context context) {
         return context.getSharedPreferences("search_preferences", Context.MODE_PRIVATE);
     }
-
 }
