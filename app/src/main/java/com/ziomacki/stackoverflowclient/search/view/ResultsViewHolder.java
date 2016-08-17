@@ -32,24 +32,25 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
 
     private SearchResultItem resultItem;
     private EventBus eventBus;
+    private Context context;
 
-    public ResultsViewHolder(View itemView, EventBus eventBus) {
+    public ResultsViewHolder(View itemView, EventBus eventBus, Context context) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         this.eventBus = eventBus;
+        this.context = context;
     }
 
     public void bind(SearchResultItem resultItem) {
         this.resultItem = resultItem;
         resultItemTitle.setText(resultItem.getTitle());
-        Context context = avatar.getContext();
         answersCount.setText(context.getString(R.string.result_answer_count, resultItem.getAnswerCount()));
         ownerName.setText(resultItem.getOwner().getDisplayName());
-        loadAvatar(avatar, context);
+        loadAvatar(avatar);
         setOnclickListener();
     }
 
-    private void loadAvatar(ImageView imageView, Context context) {
+    private void loadAvatar(ImageView imageView) {
         String imageUrl = resultItem.getOwner().getProfileImage();
         if (isStringNotEmpty(imageUrl)) {
             Picasso.with(context)

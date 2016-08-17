@@ -54,8 +54,6 @@ public class SearchResultsFragment extends Fragment implements ResultsView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-
         ApplicationComponent applicationComponent =
                 ((StackOverflowApplication) getActivity().getApplication()).getApplicationComponent();
         applicationComponent.searchComponent(new SearchModule()).inject(this);

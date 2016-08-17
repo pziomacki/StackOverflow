@@ -80,6 +80,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView, and
                 (SearchResultsFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (searchResultsFragment == null) {
             searchResultsFragment = SearchResultsFragment.getInstance();
+            searchResultsFragment.setRetainInstance(true);
             fragmentManager.beginTransaction().add(R.id.search_fragment_container, searchResultsFragment, FRAGMENT_TAG).commit();
         }
     }

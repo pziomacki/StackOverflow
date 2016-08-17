@@ -1,5 +1,6 @@
 package com.ziomacki.stackoverflowclient.search.view;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +20,10 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
 
     private List<SearchResultItem> resultItemList = Collections.emptyList();
     private EventBus eventBus;
-    
+    private Context context;
     @Inject
-    public ResultsAdapter(EventBus eventBus) {
+    public ResultsAdapter(Context context, EventBus eventBus) {
+        this.context = context;
         this.eventBus = eventBus;
     }
 
@@ -34,7 +36,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsViewHolder> {
     public ResultsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.result_item_view, parent, false);
-        return new ResultsViewHolder(view, eventBus);
+        return new ResultsViewHolder(view, eventBus, context);
     }
 
     @Override
